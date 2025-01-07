@@ -31,6 +31,7 @@ use App\Models\TiketApproval;
 use App\Models\HotelApproval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
@@ -265,15 +266,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Request Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -317,15 +322,19 @@ class ApprovalReimburseController extends Controller
                     if ($CANotificationLayer) {
                         $textNotification = "Your Cash Advanced request has been Approved, please check your request again or can download your submission in the email attachment :";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            null,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                null,
+                                null,
+                                null,
+                                $base64Image,
+                            ));
+                        } catch (\Exception $e) {
+                            Log::error('Email Approval Request Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
             } else {
@@ -366,15 +375,19 @@ class ApprovalReimburseController extends Controller
 
                     // $pdfContent = $this->cashadvancedDownload (encrypt($caTransaction->id));
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Request Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         }
@@ -428,15 +441,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor: ";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));       
+                } catch (\Exception $e) {
+                    Log::error('Email Link Approval Request Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -478,15 +495,19 @@ class ApprovalReimburseController extends Controller
                     if ($CANotificationLayer) {
                         $textNotification = "Your Cash Advanced request has been Approved, please check your request again or can download your submission in the email attachment: ";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            null,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                null,
+                                null,
+                                null,
+                                $base64Image,
+                            ));
+                        } catch (\Exception $e) {
+                            Log::error('Email Link Approval Request Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
 
@@ -527,15 +548,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));       
+                    } catch (\Exception $e) {
+                        Log::error('Email Link Approval Request Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
                 return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
             }
@@ -587,15 +612,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor.: ";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));            
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Admin Request Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
@@ -640,15 +669,19 @@ class ApprovalReimburseController extends Controller
                     if ($CANotificationLayer) {
                         $textNotification = "Your Cash Advanced request has been Approved, please check your request again or can download your submission in the email attachment :";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            null,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                null,
+                                null,
+                                null,
+                                $base64Image,
+                            ));    
+                        } catch (\Exception $e) {
+                            Log::error('Email Approval Admin Request Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
             } else {
@@ -690,15 +723,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));           
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Admin Request Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         }
@@ -810,15 +847,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));               
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Deklarasi Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -861,15 +902,19 @@ class ApprovalReimburseController extends Controller
                         $textNotification = "Your Declaration Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment :";
                         $declaration = "Declaration";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            $declaration,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                $declaration,
+                                null,
+                                null,
+                                $base64Image,
+                            ));    
+                        } catch (\Exception $e) {
+                            Log::error('Email Approval Deklarasi Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
             } else {
@@ -909,15 +954,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        $declaration,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            $declaration,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));           
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Deklarasi Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         }
@@ -973,15 +1022,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));              
+                } catch (\Exception $e) {
+                    Log::error('Email Link Approval Deklarasi Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -1023,15 +1076,19 @@ class ApprovalReimburseController extends Controller
                         $textNotification = "Your Declaration Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment :";
                         $declaration = "Declaration";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            $declaration,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                $declaration,
+                                null,
+                                null,
+                                $base64Image,
+                            ));     
+                        } catch (\Exception $e) {
+                            Log::error('Email Link Approval Deklarasi Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
 
@@ -1074,15 +1131,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        $declaration,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            $declaration,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));        
+                    } catch (\Exception $e) {
+                        Log::error('Email Link Approval Deklarasi Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
                 return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
             }
@@ -1135,15 +1196,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));              
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Admin Deklarasi Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.')
@@ -1188,15 +1253,19 @@ class ApprovalReimburseController extends Controller
                         $textNotification = "Your Declaration Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment :";
                         $declaration = "Declaration";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            $declaration,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                $declaration,
+                                null,
+                                null,
+                                $base64Image,
+                            ));       
+                        } catch (\Exception $e) {
+                            Log::error('Email Approval Admin Deklarasi Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
             } else {
@@ -1238,15 +1307,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        $declaration,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            $declaration,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));          
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Admin Deklarasi Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         }
@@ -1329,15 +1402,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));                 
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Extend Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('approval.cashadvanced')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -1383,15 +1460,19 @@ class ApprovalReimburseController extends Controller
                 if ($CANotificationLayer) {
                     $textNotification = "Your Declaration Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment :";
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        null,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        null,
-                        null,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            null,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            null,
+                            null,
+                            $base64Image,
+                        ));       
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Extend Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
 
                 return redirect()->route('approval.cashadvanced');
@@ -1428,15 +1509,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));   
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Extend Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
 
                 return redirect()->route('approval.cashadvanced')->with('success', 'Extend Approved, Thanks for Approving.');
@@ -1489,15 +1574,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));       
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Admin Extend Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('cashadvanced.admin')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -1544,15 +1633,19 @@ class ApprovalReimburseController extends Controller
                     if ($CANotificationLayer) {
                         $textNotification = "Your Extend Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment :";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            null,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                null,
+                                null,
+                                null,
+                                $base64Image,
+                            ));
+                        } catch (\Exception $e) {
+                            Log::error('Email Approval Admin Extend Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
             } else {
@@ -1593,15 +1686,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        null,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            null,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));       
+                    } catch (\Exception $e) {
+                        Log::error('Email Approval Admin Extend Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         }
@@ -1657,15 +1754,19 @@ class ApprovalReimburseController extends Controller
             if ($CANotificationLayer) {
                 $textNotification = "Your Cash Advanced request has been rejected, please discuss further with your supervisor :";
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    null,
-                    $caTransaction,
-                    $textNotification,
-                    null,
-                    null,
-                    null,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        null,
+                        $caTransaction,
+                        $textNotification,
+                        null,
+                        null,
+                        null,
+                        $base64Image,
+                    ));         
+                } catch (\Exception $e) {
+                    Log::error('Email Approval Admin Extend Layer Terakhir Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             return redirect()->route('blank.pageUn')->with('success', 'Transaction Rejected, Rejection will be send to the employee.');
@@ -1717,15 +1818,19 @@ class ApprovalReimburseController extends Controller
                         $textNotification = "Your Extend Cash Advanced request has been approved, please check your request again or can download your submission in the email attachment:";
                         $declaration = "Extend";
 
-                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                            null,
-                            $caTransaction,
-                            $textNotification,
-                            $declaration,
-                            null,
-                            null,
-                            $base64Image,
-                        ));
+                        try {
+                            Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                                null,
+                                $caTransaction,
+                                $textNotification,
+                                $declaration,
+                                null,
+                                null,
+                                $base64Image,
+                            ));
+                        } catch (\Exception $e) {
+                            Log::error('Email Link Approval Extend Reject Cash Advanced tidak terkirim: ' . $e->getMessage());
+                        }
                     }
                 }
 
@@ -1768,15 +1873,19 @@ class ApprovalReimburseController extends Controller
                         'autoOpen' => 'reject'
                     ]);
 
-                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                        $nextApproval,
-                        $caTransaction,
-                        $textNotification,
-                        $declaration,
-                        $linkApprove,
-                        $linkReject,
-                        $base64Image,
-                    ));
+                    try {
+                        Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                            $nextApproval,
+                            $caTransaction,
+                            $textNotification,
+                            $declaration,
+                            $linkApprove,
+                            $linkReject,
+                            $base64Image,
+                        ));       
+                    } catch (\Exception $e) {
+                        Log::error('Email Link Approval Extend Layer ke-' . $nextApproval->layer . ' Cash Advanced tidak terkirim: ' . $e->getMessage());
+                    }
                 }
                 return redirect()->route('blank.pageUn')->with('success', 'Transaction Approved, Thanks for Approving.');
             }
@@ -1869,19 +1978,23 @@ class ApprovalReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $hotel->no_sppd,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'approvalStatus' => 'Pending L2',
+                    ]));           
+                } catch (\Exception $e) {
+                    Log::error('Email Link Approval Hotel tidak terkirim: ' . $e->getMessage());
+                }
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -2010,38 +2123,46 @@ class ApprovalReimburseController extends Controller
 
                 if ($ticket->jns_dinas_tkt == 'Dinas') {
                     // Send email with all hotel details
-                    Mail::to($managerEmail)->send(new TicketNotification([
-                        'noSppd' => $ticket->no_sppd,
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new TicketNotification([
+                            'noSppd' => $ticket->no_sppd,
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                        ]));    
+                    } catch (\Exception $e) {
+                        Log::error('Email Link Approval Tket Jika Dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 } else {
-                    Mail::to($managerEmail)->send(new HomeTripNotification([
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new HomeTripNotification([
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                        ]));   
+                    } catch (\Exception $e) {
+                        Log::error('Email Link Approval Tket Jika tidak Dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
