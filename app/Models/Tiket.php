@@ -37,6 +37,33 @@ class Tiket extends Model
             ->where('approval_status', 'Approved')
             ->latest('approved_at');
     }
+    public function latestApprovalL1Id()
+    {
+        return $this->belongsTo(Employee::class, 'user_id', 'id')->select('manager_l1_id');
+    }
+
+    public function getManagerL1Fullname()
+    {
+        $managerL1Id = $this->latestApprovalL1Id?->manager_l1_id;
+        if ($managerL1Id) {
+            return Employee::where('employee_id', $managerL1Id)->value('fullname') ?? '-';
+        }
+        return '-';
+    }
+    public function latestApprovalL2Id()
+    {
+        return $this->belongsTo(Employee::class, 'user_id', 'id')->select('manager_l2_id');
+    }
+
+    public function getManagerL2Fullname()
+    {
+        $managerL2Id = $this->latestApprovalL2Id?->manager_l2_id;
+        if ($managerL2Id) {
+            return Employee::where('employee_id', $managerL2Id)->value('fullname') ?? '-';
+        }
+        return '-';
+    }
+
     public function latestApprovalL1Name()
     {
         return $this->belongsTo(Employee::class, 'manager_l1_id', 'employee_id')->select('fullname');
@@ -45,6 +72,8 @@ class Tiket extends Model
     {
         return $this->belongsTo(Employee::class, 'manager_l2_id', 'employee_id')->select('fullname');
     }
+
+
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -70,8 +99,6 @@ class Tiket extends Model
         'approval_status',
         'tkt_only',
         'jns_dinas_tkt',
-        'manager_l1_id',
-        'manager_l2_id',
         'contribution_level_code',
     ];
     protected $table = 'tkt_transactions';
