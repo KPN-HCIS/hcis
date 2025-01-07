@@ -979,15 +979,19 @@ class ReimburseController extends Controller
                     'autoOpen' => 'reject'
                 ]);
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    $nextApproval,
-                    $model,
-                    $textNotification,
-                    null,
-                    $linkApprove,
-                    $linkReject,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval,
+                        $model,
+                        $textNotification,
+                        null,
+                        $linkApprove,
+                        $linkReject,
+                        $base64Image,
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Submit Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -1352,15 +1356,19 @@ class ReimburseController extends Controller
                     'autoOpen' => 'reject'
                 ]);
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    $nextApproval,
-                    $model,
-                    $textNotification,
-                    null,
-                    $linkApprove,
-                    $linkReject,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval,
+                        $model,
+                        $textNotification,
+                        null,
+                        $linkApprove,
+                        $linkReject,
+                        $base64Image,
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Edit Cash Advance tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
         $model->save();
@@ -1479,15 +1487,19 @@ class ReimburseController extends Controller
                     'autoOpen' => 'reject'
                 ]);
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    $nextApproval,
-                    $model,
-                    $textNotification,
-                    $declaration,
-                    $linkApprove,
-                    $linkReject,
-                    $base64Image,
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval,
+                        $model,
+                        $textNotification,
+                        $declaration,
+                        $linkApprove,
+                        $linkReject,
+                        $base64Image,
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Submit Extend Cash Advance tidak terkirim: ' . $e->getMessage());
+                }
             }
 
             $model->save();
@@ -1947,15 +1959,19 @@ class ReimburseController extends Controller
                     'autoOpen' => 'reject'
                 ]);
 
-                Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
-                    $nextApproval,
-                    $model,
-                    $textNotification,
-                    $declaration,
-                    $linkApprove,
-                    $linkReject,
-                    $base64Image
-                ));
+                try {
+                    Mail::to($CANotificationLayer)->send(new CashAdvancedNotification(
+                        $nextApproval,
+                        $model,
+                        $textNotification,
+                        $declaration,
+                        $linkApprove,
+                        $linkReject,
+                        $base64Image
+                    ));
+                } catch (\Exception $e) {
+                    Log::error('Email Submit Deklarasi Cash Advanced tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
         $model->sett_id = $nextApproval->employee_id;
@@ -2239,22 +2255,26 @@ class ReimburseController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $req->bisnis_numb,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'approvalStatus' => $statusValue,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Submit Hotel Draft tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
         return redirect('/hotel')->with('success', 'Hotel request input successfully');
@@ -2316,22 +2336,26 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $hotel->no_sppd,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'approvalStatus' => 'Pending L2',
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Approve Link Hotel tidak terkirim: ' . $e->getMessage());
+                }
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -2577,22 +2601,26 @@ class ReimburseController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $req->bisnis_numb,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'approvalStatus' => $statusValue,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Update Hotel tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -2981,22 +3009,26 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $hotel->no_sppd,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'approvalStatus' => 'Pending L2',
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Update Status Hotel tidak terkirim: ' . $e->getMessage());
+                }
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -3112,22 +3144,26 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new HotelNotification([
-                    'noSppd' => $hotel->no_sppd,
-                    'noHtl' => $noHtlList,
-                    'namaHtl' => $namaHtl,
-                    'lokasiHtl' => $lokasiHtl,
-                    'tglMasukHtl' => $tglMasukHtl,
-                    'tglKeluarHtl' => $tglKeluarHtl,
-                    'totalHari' => $totalHari,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'approvalStatus' => 'Pending L2',
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new HotelNotification([
+                        'noSppd' => $hotel->no_sppd,
+                        'noHtl' => $noHtlList,
+                        'namaHtl' => $namaHtl,
+                        'lokasiHtl' => $lokasiHtl,
+                        'tglMasukHtl' => $tglMasukHtl,
+                        'tglKeluarHtl' => $tglKeluarHtl,
+                        'totalHari' => $totalHari,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'approvalStatus' => 'Pending L2',
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Update Status Hotel Admin tidak terkirim: ' . $e->getMessage());
+                }
             }
         } elseif ($hotel->approval_status == 'Pending L2') {
             Hotel::where('no_htl', $noHtl)->update(['approval_status' => 'Approved']);
@@ -3655,25 +3691,29 @@ class ReimburseController extends Controller
             // // dd($managerEmail);
             if ($managerEmail) {
                 // Send email to the manager
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'approvalStatus' => $statusValue,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $req->bisnis_numb,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'approvalStatus' => $statusValue,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Submit tiket tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -3743,25 +3783,29 @@ class ReimburseController extends Controller
                 }
 
                 // Send email with all hotel details
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $ticket->no_sppd,
-                    'noTkt' => $noTktList,
-                    'namaPenumpang' => $npTkt,
-                    'dariTkt' => $dariTkt,
-                    'keTkt' => $keTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'managerName' => $managerName,
-                    'approvalStatus' => 'Pending L2',
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $ticket->no_sppd,
+                        'noTkt' => $noTktList,
+                        'namaPenumpang' => $npTkt,
+                        'dariTkt' => $dariTkt,
+                        'keTkt' => $keTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'managerName' => $managerName,
+                        'approvalStatus' => 'Pending L2',
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Approve Link Tiket tidak terkirim: ' . $e->getMessage());
+                }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
             Tiket::where('no_tkt', $noTkt)->update(['approval_status' => 'Approved']);
@@ -4049,25 +4093,29 @@ class ReimburseController extends Controller
 
             if ($managerEmail) {
                 // Send email to the manager with all ticket details
-                Mail::to($managerEmail)->send(new TicketNotification([
-                    'noSppd' => $req->bisnis_numb,
-                    'noTkt' => $noTktList,  // all ticket numbers
-                    'namaPenumpang' => $npTkt,  // all passengers
-                    'dariTkt' => $dariTkt,  // all departure locations
-                    'keTkt' => $keTkt,
-                    'tipeTkt' => $tipeTkt,
-                    'tglBrktTkt' => $tglBrktTkt,
-                    'jamBrktTkt' => $jamBrktTkt,
-                    'tglPlgTkt' => $tglPlgTkt,
-                    'jamPlgTkt' => $jamPlgTkt,
-                    'approvalStatus' => $statusValue,
-                    'managerName' => $managerName,
-                    'approvalLink' => $approvalLink,
-                    'rejectionLink' => $rejectionLink,
-                    'base64Image' => $base64Image,
-                    'textNotification' => $textNotification,
-                    'employeeName' => $employeeName,
-                ]));
+                try {
+                    Mail::to($managerEmail)->send(new TicketNotification([
+                        'noSppd' => $req->bisnis_numb,
+                        'noTkt' => $noTktList,  // all ticket numbers
+                        'namaPenumpang' => $npTkt,  // all passengers
+                        'dariTkt' => $dariTkt,  // all departure locations
+                        'keTkt' => $keTkt,
+                        'tipeTkt' => $tipeTkt,
+                        'tglBrktTkt' => $tglBrktTkt,
+                        'jamBrktTkt' => $jamBrktTkt,
+                        'tglPlgTkt' => $tglPlgTkt,
+                        'jamPlgTkt' => $jamPlgTkt,
+                        'approvalStatus' => $statusValue,
+                        'managerName' => $managerName,
+                        'approvalLink' => $approvalLink,
+                        'rejectionLink' => $rejectionLink,
+                        'base64Image' => $base64Image,
+                        'textNotification' => $textNotification,
+                        'employeeName' => $employeeName,
+                    ]));
+                } catch (\Exception $e) {
+                    Log::error('Email Update Tiket tidak terkirim: ' . $e->getMessage());
+                }
             }
         }
 
@@ -4480,44 +4528,52 @@ class ReimburseController extends Controller
                 }
 
                 if ($ticket->jns_dinas_tkt == 'Dinas') {
-                    Mail::to($managerEmail)->send(new TicketNotification([
-                        'noSppd' => $ticket->no_sppd,
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                        'base64Image' => $base64Image,
-                        'textNotification' => $textNotification,
-                        'employeeName' => $employeeName,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new TicketNotification([
+                            'noSppd' => $ticket->no_sppd,
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                            'base64Image' => $base64Image,
+                            'textNotification' => $textNotification,
+                            'employeeName' => $employeeName,
+                        ]));
+                    } catch (\Exception $e) {
+                        Log::error('Email Update Status Tiket Jika Dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 } else {
-                    Mail::to($managerEmail)->send(new HomeTripNotification([
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                        'base64Image' => $base64Image,
-                        'textNotification' => $textNotification,
-                        'employeeName' => $employeeName,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new HomeTripNotification([
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                            'base64Image' => $base64Image,
+                            'textNotification' => $textNotification,
+                            'employeeName' => $employeeName,
+                        ]));
+                    } catch (\Exception $e) {
+                        Log::error('Email Update Status Tiket Jika tidak dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
@@ -4682,44 +4738,52 @@ class ReimburseController extends Controller
                 }
 
                 if ($ticket->jns_dinas_tkt == 'Dinas') {
-                    Mail::to($managerEmail)->send(new TicketNotification([
-                        'noSppd' => $ticket->no_sppd,
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                        'base64Image' => $base64Image,
-                        'textNotification' => $textNotification,
-                        'employeeName' => $employeeName,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new TicketNotification([
+                            'noSppd' => $ticket->no_sppd,
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                            'base64Image' => $base64Image,
+                            'textNotification' => $textNotification,
+                            'employeeName' => $employeeName,
+                        ]));
+                    } catch (\Exception $e) {
+                        Log::error('Email Update Status Tiket Admin Jika Dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 } else {
-                    Mail::to($managerEmail)->send(new HomeTripNotification([
-                        'noTkt' => $noTktList,
-                        'namaPenumpang' => $npTkt,
-                        'dariTkt' => $dariTkt,
-                        'keTkt' => $keTkt,
-                        'tglBrktTkt' => $tglBrktTkt,
-                        'jamBrktTkt' => $jamBrktTkt,
-                        'tipeTkt' => $tipeTkt,
-                        'tglPlgTkt' => $tglPlgTkt,
-                        'jamPlgTkt' => $jamPlgTkt,
-                        'managerName' => $managerName,
-                        'approvalStatus' => 'Pending L2',
-                        'approvalLink' => $approvalLink,
-                        'rejectionLink' => $rejectionLink,
-                        'base64Image' => $base64Image,
-                        'textNotification' => $textNotification,
-                        'employeeName' => $employeeName,
-                    ]));
+                    try {
+                        Mail::to($managerEmail)->send(new HomeTripNotification([
+                            'noTkt' => $noTktList,
+                            'namaPenumpang' => $npTkt,
+                            'dariTkt' => $dariTkt,
+                            'keTkt' => $keTkt,
+                            'tglBrktTkt' => $tglBrktTkt,
+                            'jamBrktTkt' => $jamBrktTkt,
+                            'tipeTkt' => $tipeTkt,
+                            'tglPlgTkt' => $tglPlgTkt,
+                            'jamPlgTkt' => $jamPlgTkt,
+                            'managerName' => $managerName,
+                            'approvalStatus' => 'Pending L2',
+                            'approvalLink' => $approvalLink,
+                            'rejectionLink' => $rejectionLink,
+                            'base64Image' => $base64Image,
+                            'textNotification' => $textNotification,
+                            'employeeName' => $employeeName,
+                        ]));
+                    } catch (\Exception $e) {
+                        Log::error('Email Update Status Tiket Admin Jika Tidak Dinas tidak terkirim: ' . $e->getMessage());
+                    }
                 }
             }
         } elseif ($ticket->approval_status == 'Pending L2') {
