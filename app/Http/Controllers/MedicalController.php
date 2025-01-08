@@ -1390,6 +1390,31 @@ class MedicalController extends Controller
         return view('hcis.reimbursements.medical.admin.medicalAdmin', compact('family', 'medical_plan', 'medical', 'parentLink', 'sublink', 'link', 'rejectMedic', 'employees', 'employee_id', 'master_medical', 'formatted_data', 'medicalGroup', 'gaFullname'));
     }
 
+    public function medicalAdminEditPlafon(Request $request, $period, $employee)
+    {
+        $employee_id = $employee;
+        $period = $period;
+
+        $medicalData = $request->except(['_token']);
+
+        // Loop melalui data medical untuk menyimpan atau memperbarui
+        foreach ($medicalData as $medicalType => $balance) {
+            HealthPlan::updateOrCreate(
+                [
+                    'employee_id' => $employee_id,
+                    'period' => $period,
+                    'medical_type' => $medicalType
+                ],
+                [
+                    'balance' => str_replace('.', '', $balance) // Hapus format angka sebelum disimpan
+                ]
+            );
+        }
+
+        // Kirim data ke view
+        return redirect()->back()->with('success', 'Plafon are edited');
+    }
+
     public function medicalAdminDetailForm($key)
     {
         // Gunakan findByRouteKey untuk mendekripsi $key
