@@ -1207,7 +1207,16 @@ class MedicalController extends Controller
             }
         }
 
-        $medicalGroup = $healthCoverageQuery->where('status', 'Done')->get()->groupBy('employee_id');
+        if (request()->get('statusMDC') == '') {
+        } else {
+            if ($request->has('statusMDC') && $request->input('statusMDC') !== '') {
+                $statusMDC = $request->input('statusMDC');
+                $healthCoverageQuery->where('status', $statusMDC);
+                $hasFilter = true;
+            }
+        }
+
+        $medicalGroup = $healthCoverageQuery->get()->groupBy('employee_id');
 
         $query = Employee::with(['employee', 'statusReqEmployee', 'statusSettEmployee']);
 
@@ -1718,13 +1727,14 @@ class MedicalController extends Controller
 
     public function exportAdminExcel(Request $request)
     {
+        $statusMDC = $request->input('statusMDC');
         $stat = $request->input('stat');
         $customSearch = $request->input('customsearch');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $unit = $request->input('unit');
 
-        return Excel::download(new MedicalExport($stat, $customSearch, $startDate, $endDate, $unit), 'medical_report.xlsx');
+        return Excel::download(new MedicalExport($statusMDC, $stat, $customSearch, $startDate, $endDate, $unit), 'medical_report.xlsx');
     }
 
     public function exportDetailExcel($employee_id)
