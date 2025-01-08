@@ -76,7 +76,7 @@
         <img src="{{ public_path('images/kop.jpg') }}" alt="Kop Surat">
     </div>
     <h5 class="center">TICKET FORM</h5>
-    <h5 class="center">No. {{ ($ticket->no_tkt) }}</h5>
+    <h5 class="center">No. {{ $ticket->no_tkt }}</h5>
 
     <table>
         <p>Please order tickets as follows:</p>
@@ -161,7 +161,7 @@
         <tr>
             <td class="label">Company</td>
             <td class="colon">:</td>
-            <td class="value">{{ $passenger->company_name }}</td>
+            <td class="value">{{ $ticket->contribution_level_code ?? '-' }}</td>
         </tr>
         <tr>
             <td class="label">Cost Center</td>
@@ -171,45 +171,55 @@
         <tr>
             <td class="label">Ticket Status</td>
             <td class="colon">:</td>
-            <td class="value"><b>{{ $ticket->approval_status ?? '-'}}</b></td>
+            <td class="value"><b>{{ $ticket->approval_status ?? '-' }}</b></td>
         </tr>
     </table>
     <table>
         <tr>
             <td colspan="3"><b>Approved By :</b></td>
         </tr>
-        <tr>
-            <td class="label">Manager Name 1</td>
-            <td class="colon">:</td>
-            <td class="value"> {{ $ticket->manager1_fullname ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Date</td>
-            <td class="colon">:</td>
-            <td class="value"> {{ $ticket->latestApprovalL1->approved_at ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Manager Name 2</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $ticket->manager2_fullname ?? '-' }}</td>
-        </tr>
+        @if ($ticket->manager_l1_id == null)
+            {
+            <tr>
+                <td class="label">Manager Name 1</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $ticket->getManagerL1Fullname() ?? '-' }}</td>
+            </tr>
+            }
+        @else{
+            <tr>
+                <td class="label">Manager Name 1</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $ticket->latestApprovalL1Name->fullname ?? '-' }}</td>
+            </tr>
+            }
+        @endif
+
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
             <td class="value"> {{ $ticket->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
-    </table>
-
-    <table>
-        <tr>
-            <td class="label">HRD</td>
-            <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->hrd }}</td>
-        </tr>
+        @if ($ticket->manager_l2_id == null)
+            {
+            <tr>
+                <td class="label">Manager Name 2</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $ticket->getManagerL2Fullname() ?? '-' }}</td>
+            </tr>
+            }
+        @else{
+            <tr>
+                <td class="label">Manager Name 2</td>
+                <td class="colon">:</td>
+                <td class="value">{{ $ticket->latestApprovalL2Name->fullname ?? '-' }}</td>
+            </tr>
+            }
+        @endif
         <tr>
             <td class="label">Date</td>
             <td class="colon">:</td>
-            <td class="value">{{ $ticket->businessTrip->tanggal_hrd }}</td>
+            <td class="value"> {{ $ticket->latestApprovalL2->approved_at ?? '-' }}</td>
         </tr>
     </table>
 </body>

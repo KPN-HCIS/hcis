@@ -106,12 +106,12 @@
                                     <select class="form-select form-select-sm select2" name="tujuan" id="tujuan"
                                         onchange="BTtoggleOthers()" required>
                                         <option value="">--- Choose Destination ---</option>
+                                        <option value="Others">Others</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}">
                                                 {{ $location->area . ' (' . $location->company_name . ')' }}
                                             </option>
                                         @endforeach
-                                        <option value="Others">Others</option>
                                     </select>
                                     <br><input type="text" name="others_location" id="others_location"
                                         class="form-control form-control-sm mt-2" placeholder="Other Location"

@@ -138,11 +138,11 @@
             <td class="colon">:</td>
             <td class="value">{{ $sppd->divisi }}</td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td class="label">PT</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->employee->company_name }}</td>
-        </tr>
+        </tr> --}}
         <tr>
             <td class="label">Cost Center</td>
             <td class="colon">:</td>
@@ -158,6 +158,11 @@
             <td class="label">Destination</td>
             <td class="colon">:</td>
             <td class="value">{{ $sppd->tujuan }}</td>
+        </tr>
+        <tr>
+            <td class="label">Company</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $sppd->bb_perusahaan }}</td>
         </tr>
         <tr>
             <td class="label">Needs</td>

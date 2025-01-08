@@ -105,12 +105,12 @@ class ReimburseController extends Controller
     function reimbursements()
     {
         $userId = Auth::id();
-        if($userId=='23886' || $userId=='23892' || $userId=='23893' ||  $userId=='25678' || $userId=='25725' || $userId=='25734' || $userId='12345'){
+        if ($userId == '23886' || $userId == '23892' || $userId == '23893' || $userId == '25678' || $userId == '25725' || $userId == '25734' || $userId = '12345') {
             $access_ca = "Y";
-        }else{
+        } else {
             $access_ca = "N";
         }
-        
+
         return view('hcis.reimbursements.dash', [
             'userId' => $userId,
             'access_ca' => $access_ca,
@@ -262,10 +262,10 @@ class ReimburseController extends Controller
             $approval_sett->ReqName = $approval_sett->statusReqEmployee ? $approval_sett->statusReqEmployee->fullname : '';
         }
 
-        $ca_extend = ca_extend::where('approval_status', '<>', 'Rejected')  
-            ->orderBy('created_at', 'desc') // Mengurutkan terlebih dahulu berdasarkan created_at secara descending  
-            ->orderBy('layer', 'asc') // Kemudian mengurutkan berdasarkan layer  
-            ->get();  
+        $ca_extend = ca_extend::where('approval_status', '<>', 'Rejected')
+            ->orderBy('created_at', 'desc') // Mengurutkan terlebih dahulu berdasarkan created_at secara descending
+            ->orderBy('layer', 'asc') // Kemudian mengurutkan berdasarkan layer
+            ->get();
 
         foreach ($ca_extend as $approval_ext) {
             $approval_ext->ReqName = $approval_ext->statusReqEmployee ? $approval_ext->statusReqEmployee->fullname : '';
@@ -1322,7 +1322,7 @@ class ReimburseController extends Controller
                 } else {
                     $employee_id = $data_matrix_approval->employee_id;
                 }
-                if ($employee_id !=  null) {
+                if ($employee_id != null) {
                     $model_approval = new ca_approval;
                     $model_approval->ca_id = $req->no_id;
                     $model_approval->role_name = $data_matrix_approval->desc;
@@ -1625,7 +1625,7 @@ class ReimburseController extends Controller
         if ($req->has('removed_prove_declare')) {
             $removedFiles = json_decode($req->removed_prove_declare, true);
             $existingFiles = $req->existing_prove_declare ? json_decode($req->existing_prove_declare, true) : [];
-        
+
             // Hapus file yang ada di server
             foreach ($removedFiles as $fileToRemove) {
                 if (in_array($fileToRemove, $existingFiles)) {
@@ -1639,29 +1639,29 @@ class ReimburseController extends Controller
         } else {
             $existingFiles = $req->existing_prove_declare ? json_decode($req->existing_prove_declare, true) : [];
         }
-        
+
         // Proses file baru
         if ($req->hasFile('prove_declare')) {
             $req->validate([
                 'prove_declare.*' => 'required|mimes:jpeg,png,jpg,gif,pdf|max:2048',
             ]);
-        
+
             foreach ($req->file('prove_declare') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $upload_path = 'uploads/proofs/' . $employee_data->employee_id;
                 $full_path = public_path($upload_path);
-        
+
                 if (!is_dir($full_path)) {
                     mkdir($full_path, 0755, true);
                 }
-        
+
                 $file->move($full_path, $filename);
                 $existingFiles[] = $upload_path . '/' . $filename;
             }
         }
-        
+
         // Simpan semua file yang tersisa ke database
-        $model->prove_declare = json_encode(array_values($existingFiles));                   
+        $model->prove_declare = json_encode(array_values($existingFiles));
         $model->no_ca = $req->no_ca;
         $model->no_sppd = $req->bisnis_numb;
 
@@ -1930,7 +1930,7 @@ class ReimburseController extends Controller
                         $model_approval->layer = $data_matrix_approval->layer;
                         $model_approval->approval_status = 'Pending';
                         $model_approval->save();
-                        
+
                         $nextApproval = ca_sett_approval::where('ca_id', $model->id)
                             ->where('employee_id', $employee_id)
                             ->first();
@@ -2153,6 +2153,29 @@ class ReimburseController extends Controller
         } elseif ($req->has('action_submit')) {
             $statusValue = 'Pending L1';  // When "Submit" is clicked
         }
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
         // Prepare the hotel data arrays
         $hotelData = [
             'nama_htl' => $req->nama_htl,
@@ -2165,6 +2188,7 @@ class ReimburseController extends Controller
             'approval_status' => $statusValue,
             'no_htl' => $noSppdHtl,
             'no_sppd' => $req->bisnis_numb,
+            'contribution_level_code' => $req->contribution_level_code,
         ];
 
         $namaHtl = [];
@@ -2179,7 +2203,10 @@ class ReimburseController extends Controller
             if (!empty($hotelData['nama_htl'][$key]) && !empty($hotelData['lokasi_htl'][$key]) && !empty($hotelData['tgl_masuk_htl'][$key])) {
                 $model = new Hotel();
                 $model->id = (string) Str::uuid();
-                $model->no_htl = $noSppdHtl; // Use the pre-generated hotel number
+                $model->no_htl = $noSppdHtl;
+                $model->manager_l1_id = $managerL1;
+                $model->manager_l2_id = $managerL2;
+                $model->contribution_level_code = $req->contribution_level_code;
                 $model->no_sppd = $req->bisnis_numb;
                 $model->user_id = $userId;
                 $model->unit = $req->unit;
@@ -2195,10 +2222,6 @@ class ReimburseController extends Controller
                 $model->hotel_only = 'Y';
                 $model->created_by = $userId;
                 $model->save();
-
-                // $hotelModels[] = $model;
-                // dd($hotelModels);
-                // dd($hotelData);
 
                 if ($statusValue == 'Pending L1') {
                     $employee = Employee::where('id', $userId)->first();
@@ -2515,6 +2538,30 @@ class ReimburseController extends Controller
             $statusValue = 'Pending L1';
         }
 
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
         // Get the no_htl from the first existing hotel record
 
         // dd($noHtl);
@@ -2534,6 +2581,8 @@ class ReimburseController extends Controller
                 // Prepare hotel data array
                 $hotelData = [
                     'unit' => $req->unit,
+                    'manager_l1_id' => $managerL1,
+                    'manager_l2_id' => $managerL2,
                     'no_sppd' => $req->bisnis_numb,
                     'nama_htl' => $req->nama_htl[$index],
                     'lokasi_htl' => $req->lokasi_htl[$index],
@@ -2545,7 +2594,7 @@ class ReimburseController extends Controller
                     'approval_status' => $statusValue,
                     'jns_dinas_htl' => $req->jns_dinas_htl,
                     'hotel_only' => 'Y',
-                    'no_htl' => $existingNoHtl,
+                    'contribution_level_code' => $req->contribution_level_code,
                 ];
 
                 if (isset($req->hotel_ids[$index]) && isset($existingHotels[$req->hotel_ids[$index]])) {
@@ -2561,6 +2610,9 @@ class ReimburseController extends Controller
                         'id' => (string) Str::uuid(),
                         'user_id' => $userId,
                         'created_by' => $userId,
+                        'manager_l1_id' => $managerL1,
+                        'manager_l2_id' => $managerL2,
+                        'contribution_level_code' => $req->contribution_level_code,
                     ]));
                     $processedHotelIds[] = $newHotel->id;  // Keep track of processed hotel IDs
                 }
@@ -2629,7 +2681,7 @@ class ReimburseController extends Controller
             // $HTLNotificationSubmit = Employee::where('employee_id', $employee->manager_l1_id)->pluck('email')->first();
             $HTLNotificationSubmit = "eriton.dewa@kpn-corp.com";
             // dd($hotelData);
-            $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
+            // $allHotels = Hotel::where('no_htl', $existingNoHtl)->get()->toArray();
             // dd($allHotels);
             if ($HTLNotificationSubmit) {
                 // Pass all hotels to the notification email
@@ -3516,6 +3568,29 @@ class ReimburseController extends Controller
     public function ticketSubmit(Request $req)
     {
         $userId = Auth::id();
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
         function getRomanMonth_tkt($month)
         {
             $romanMonths = [
@@ -3558,18 +3633,16 @@ class ReimburseController extends Controller
                 ->orderBy('no_tkt', 'desc')
                 ->withTrashed()
                 ->first();
-            // dd($lastTransaction);
+
             // Determine the new ticket number
             if ($lastTransaction && preg_match('/(\d{3})\/' . preg_quote($prefix, '/') . '\/[^\/]+\/' . $currentYear . '/', $lastTransaction->no_tkt, $matches)) {
                 $lastNumber = intval($matches[1]);
             } else {
                 $lastNumber = 0;
             }
-            // dd($lastNumber);
 
             $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
             $newNoTkt = "$newNumber/$prefix/$romanMonth/$currentYear";
-            // dd($newNoTkt);
 
             return $newNoTkt;
         }
@@ -3625,9 +3698,12 @@ class ReimburseController extends Controller
                 $tiket->no_tkt = $newNoTkt;
 
                 $userId = Auth::id();
+                $tiket->manager_l1_id = $managerL1;
+                $tiket->manager_l2_id = $managerL2;
                 $tiket->no_sppd = $req->bisnis_numb;
                 $tiket->user_id = $userId;
                 $tiket->unit = $req->unit;
+                $tiket->contribution_level_code = $req->contribution_level_code;
                 $tiket->jk_tkt = $ticketData['jk_tkt'][$key];
                 $tiket->np_tkt = $ticketData['np_tkt'][$key];
                 $tiket->noktp_tkt = $ticketData['noktp_tkt'][$key];
@@ -3972,6 +4048,30 @@ class ReimburseController extends Controller
         $processedTicketIds = [];
         $firstNoTkt = null;
 
+        $employee_data = Employee::where('id', $userId)->first();
+
+        function findDepartmentHead($employee)
+        {
+            $manager = Employee::where('employee_id', $employee->manager_l1_id)->first();
+
+            if (!$manager) {
+                return null;
+            }
+
+            $designation = Designation::where('job_code', $manager->designation_code)->first();
+
+            if ($designation->dept_head_flag == 'T') {
+                return $manager;
+            } else {
+                return findDepartmentHead($manager);
+            }
+            return null;
+        }
+        $deptHeadManager = findDepartmentHead($employee_data);
+
+        $managerL1 = $deptHeadManager->employee_id;
+        $managerL2 = $deptHeadManager->manager_l1_id;
+
         if ($req->has('action_draft')) {
             $statusValue = 'Draft';  // When "Save as Draft" is clicked
         } elseif ($req->has('action_submit')) {
@@ -3995,6 +4095,9 @@ class ReimburseController extends Controller
             if (!empty($value)) {
                 $ticketData = [
                     'no_sppd' => $req->bisnis_numb,
+                    'manager_l1_id' => $managerL1,
+                    'manager_l2_id' => $managerL2,
+                    'contribution_level_code' => $req->contribution_level_code,
                     'user_id' => Auth::id(),
                     'unit' => $req->unit,
                     'dari_tkt' => $req->dari_tkt[$key] ?? null,
@@ -4014,6 +4117,8 @@ class ReimburseController extends Controller
                     'tkt_only' => 'Y',
                 ];
 
+                // dd($ticketData);
+
 
                 if (isset($existingTickets[$value])) {
                     $existingTicket = $existingTickets[$value];
@@ -4028,6 +4133,9 @@ class ReimburseController extends Controller
                     $newTiket = Tiket::create(array_merge($ticketData, [
                         'id' => (string) Str::uuid(),
                         'noktp_tkt' => $value,
+                        'manager_l1_id' => $managerL1,
+                        'manager_l2_id' => $managerL2,
+                        'contribution_level_code' => $req->contribution_level_code,
                         'tkt_only' => 'Y',
                     ]));
                     $processedTicketIds[] = $newTiket->id;
@@ -4164,7 +4272,9 @@ class ReimburseController extends Controller
                     'type_tkt' => $ticket->type_tkt,
                     'jenis_tkt' => $ticket->jenis_tkt,
                     'company_name' => $ticket->employee->company_name ?? 'N/A',
-                    'cost_center' => $ticket->cost_center ?? 'N/A'
+                    'cost_center' => $ticket->cost_center ?? 'N/A',
+                    'manager1_fullname' => $ticket->manager1_fullname, // Accessor attribute
+                    'manager2_fullname' => $ticket->manager2_fullname,
                 ];
             })
         ];
@@ -4581,7 +4691,7 @@ class ReimburseController extends Controller
             if ($ticket->jns_dinas_tkt == 'Cuti') {
                 // Hitung total pengurangan kuota berdasarkan semua tiket
                 $totalDecrement = 0;
-        
+
                 foreach ($ticketNpTkt as $name) {
                     // Dapatkan type_tkt untuk setiap tiket berdasarkan nama
                     $ticketType = Tiket::where('user_id', $ticket->user_id)
@@ -4589,19 +4699,19 @@ class ReimburseController extends Controller
                         ->where('tkt_only', '=', 'Y')
                         ->where('np_tkt', $name) // Pastikan mengambil type_tkt untuk nama saat ini
                         ->value('type_tkt');
-        
+
                     // Default ke 'One Way' jika type_tkt tidak ditemukan
                     if (!$ticketType) {
                         $ticketType = 'One Way';
                     }
-        
+
                     // Tentukan nilai pengurangan berdasarkan type_tkt
                     $decrementValue = ($ticketType == 'One Way') ? 1 : 2;
-        
+
                     // Tambahkan nilai pengurangan ke total
                     $totalDecrement += $decrementValue;
                 }
-        
+
                 // Kurangi kuota total di HomeTrip berdasarkan employee_id
                 HomeTrip::where('employee_id', $ticketEmployeeId)
                     ->where('period', $currentYear)
@@ -4853,18 +4963,18 @@ class ReimburseController extends Controller
             ->pluck('id');
 
         // Get transactions with the latest ticket IDs
-        $transactions = Tiket::whereIn('id', $latestTicketIds)  
-            ->with('businessTrip')  
-            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions  
-            ->orderBy('created_at', 'desc')  
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {  
-                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);  
-            })  
-            ->when($tktType, function ($query) use ($tktType) {  
-                if ($tktType !== '-') { // Pastikan - tidak dianggap sebagai tipe yang valid  
-                    $query->where('jns_dinas_tkt', $tktType);  
-                }  
-            });  
+        $transactions = Tiket::whereIn('id', $latestTicketIds)
+            ->with('businessTrip')
+            ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
+            ->orderBy('created_at', 'desc')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereRaw("DATE(tgl_brkt_tkt) BETWEEN ? AND ?", [$startDate, $endDate]);
+            })
+            ->when($tktType, function ($query) use ($tktType) {
+                if ($tktType !== '-') { // Pastikan - tidak dianggap sebagai tipe yang valid
+                    $query->where('jns_dinas_tkt', $tktType);
+                }
+            });
 
 
         // Apply permission filters

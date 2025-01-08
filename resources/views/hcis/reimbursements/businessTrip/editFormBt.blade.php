@@ -120,15 +120,15 @@
                                     <select class="form-select form-select-sm select2" name="tujuan" id="tujuan"
                                         onchange="BTtoggleOthers()" required>
                                         <option value="">--- Choose Destination ---</option>
+                                        <option value="Others"
+                                        {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
+                                        Others</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}"
                                                 {{ $n->tujuan === $location->area ? 'selected' : '' }}>
                                                 {{ $location->area . ' (' . $location->city . ')' }}
                                             </option>
                                         @endforeach
-                                        <option value="Others"
-                                            {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
-                                            Others</option>
                                     </select>
 
                                     <br>

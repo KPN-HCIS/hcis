@@ -12,6 +12,10 @@ class TiketApproval extends Model
     use HasFactory, HasUuids;
     use SoftDeletes;
 
+    public function employeeId()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
     protected $fillable = [
         'id',
         'tkt_id',
