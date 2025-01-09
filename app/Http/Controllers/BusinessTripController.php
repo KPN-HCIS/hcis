@@ -2456,7 +2456,7 @@ class BusinessTripController extends Controller
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalMeals,
+                            'totalMeals' => $totalMeals,
                         ];
                     }
                 }
