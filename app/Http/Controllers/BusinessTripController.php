@@ -735,7 +735,6 @@ class BusinessTripController extends Controller
                             'hotel_name' => $hotelName,
                             'company_code' => $companyCode,
                             'nominal' => $nominal,
-                            'totalPenginapan' => $totalPenginapan,
                         ];
                     }
                 }
@@ -753,7 +752,21 @@ class BusinessTripController extends Controller
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
+                }
+            }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+                    $totalMeals = str_replace('.', '', $request->total_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
                         ];
                     }
                 }
@@ -765,6 +778,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
 
             $ca->detail_ca = json_encode($detail_ca);
@@ -854,6 +868,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
 
                 // Fetch ticket and hotel details with proper conditions
@@ -2563,6 +2580,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
                 // Fetch ticket and hotel details with proper conditions
                 $ticketDetails = Tiket::where('no_sppd', $businessTrip->no_sppd)
@@ -3488,6 +3508,7 @@ class BusinessTripController extends Controller
         $userId = Auth::id();
         $employee_data = Employee::where('id', $n->user_id)->first();
         $employees = Employee::orderBy('ktp')->get();
+        $group_company = Employee::where('id', $employee_data->id)->pluck('group_company')->first();
 
         if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
@@ -3570,6 +3591,7 @@ class BusinessTripController extends Controller
             'parentLink' => $parentLink,
             'link' => $link,
             'perdiem' => $perdiem,
+            'group_company' => $group_company,
         ]);
     }
 
