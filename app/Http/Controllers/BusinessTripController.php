@@ -2065,6 +2065,7 @@ class BusinessTripController extends Controller
     {
         $userId = Auth::id();
         $employee_data = Employee::where('id', $userId)->first();
+        $group_company = Employee::where('id', $userId)->pluck('group_company')->first();
         $locations = Location::orderBy('area')->get();
         $companies = Company::orderBy('contribution_level')->get();
         $employees = Employee::orderBy('ktp')->get();
@@ -2103,6 +2104,7 @@ class BusinessTripController extends Controller
                 'link' => $link,
                 'isAllowed' => $isAllowed,
                 'allowance' => $allowance,
+                'group_company' => $group_company,
             ]
         );
     }
