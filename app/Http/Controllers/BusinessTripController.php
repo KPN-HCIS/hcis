@@ -929,6 +929,8 @@ class BusinessTripController extends Controller
             $allowance = "Allowance";
         }
 
+        $group_company = Employee::where('id', $employee_data->id)->pluck('group_company')->first();
+
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null
@@ -995,7 +997,7 @@ class BusinessTripController extends Controller
             'n' => $n,
             'allowance' => $allowance,
             'hotelData' => $hotelData,
-            'taksiData' => $taksi, // Pass the taxi data
+            'taksiData' => $taksi,
             'ticketData' => $ticketData,
             'employee_data' => $employee_data,
             'companies' => $companies,
@@ -1007,6 +1009,7 @@ class BusinessTripController extends Controller
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
             'hasCaData' => $hasCaData,
             'perdiem' => $perdiem,
+            'group_company' => $group_company,
             'parentLink' => $parentLink,
             'link' => $link,
         ]);
@@ -1129,6 +1132,7 @@ class BusinessTripController extends Controller
             $detail_transport = [];
             $detail_penginapan = [];
             $detail_lainnya = [];
+            $detail_meals = [];
 
             // Populate detail_perdiem
             if ($request->has('start_bt_perdiem')) {
@@ -1212,6 +1216,20 @@ class BusinessTripController extends Controller
                     }
                 }
             }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
+                }
+            }
 
             // Save the details
             $declare_ca = [
@@ -1219,6 +1237,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
             if ($request->hasFile('prove_declare')) {
                 $file = $request->file('prove_declare');
@@ -1269,6 +1288,7 @@ class BusinessTripController extends Controller
             $detail_transport = [];
             $detail_penginapan = [];
             $detail_lainnya = [];
+            $detail_meals = [];
 
             // Populate detail_perdiem
             if ($request->has('start_bt_perdiem')) {
@@ -1354,12 +1374,28 @@ class BusinessTripController extends Controller
                     }
                 }
             }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+                    $totalMeals = str_replace('.', '', $request->total_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
+                }
+            }
             // Save the details
             $declare_ca = [
                 'detail_perdiem' => $detail_perdiem,
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
             if ($request->hasFile('prove_declare')) {
                 $file = $request->file('prove_declare');
@@ -1469,6 +1505,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
                 // dd($caDetails,   $detail_ca );
 
@@ -1485,6 +1524,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($declare_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($declare_ca['detail_meals'] ?? [], 'nominal')),
                 ];
 
                 // Send email to the manager

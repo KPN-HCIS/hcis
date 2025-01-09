@@ -147,15 +147,15 @@
                                                     <button class="nav-link active" id="pills-perdiem-tab"
                                                         data-bs-toggle="pill" data-bs-target="#pills-perdiem" type="button"
                                                         role="tab" aria-controls="pills-perdiem"
-                                                        aria-selected="true">{{$allowance}}</button>
+                                                        aria-selected="true">{{ $allowance }}</button>
                                                 </li>
-
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="pills-meals-tab" data-bs-toggle="pill"
-                                                        data-bs-target="#pills-meals" type="button" role="tab"
-                                                        aria-controls="pills-meals"
-                                                        aria-selected="false">Meals</button>
-                                                </li>
+                                                @if ($group_company != 'KPN Plantations')
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="pills-meals-tab" data-bs-toggle="pill"
+                                                            data-bs-target="#pills-meals" type="button" role="tab"
+                                                            aria-controls="pills-meals" aria-selected="false">Meals</button>
+                                                    </li>
+                                                @endif
                                                 <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
@@ -274,16 +274,16 @@
                                                         class="file-icon" style="width: 50px; height: 50px;">
                                                     <div style="margin-top: 5px;"><u>View Proof</u></div>
                                                 </a>
-                                            {{-- @else
+                                                {{-- @else
                                                 <div class="text-danger">No proof uploaded</div> --}}
                                         @endif
 
                                         {{-- <input type="hidden" name="status" value="Declaration L1" id="status"> --}}
                                         <input type="hidden" name="no_id" value="{{ $ca->id ?? 0 }}">
                                         <input type="hidden" name="ca_id" value="{{ $ca->no_ca ?? 0 }}">
-                                        <input class="form-control" id="group_company" name="group_company" type="hidden"
-                                            value="{{ $employee_data->group_company }}" readonly>
-                                            <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                        <input class="form-control" id="group_company" name="group_company"
+                                            type="hidden" value="{{ $employee_data->group_company }}" readonly>
+                                        <input class="form-control" id="perdiem" name="perdiem" type="hidden"
                                             value="{{ $perdiem->amount ?? 0 }}" readonly>
 
                                         <div class="d-flex justify-content-end mt-3">
@@ -335,7 +335,7 @@
                     const inputSummary = `
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <tr>
-                            <th style="width: 40%; text-align: left; padding: 8px;">Total {{$allowance}}</th>
+                            <th style="width: 40%; text-align: left; padding: 8px;">Total {{ $allowance }}</th>
                             <td style="width: 10%; text-align: right; padding: 8px;">:</td>
                             <td style="width: 50%; text-align: left; padding: 8px;">Rp. <strong>${totalBtPerdiem}</strong></td>
                         </tr>
