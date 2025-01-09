@@ -151,6 +151,12 @@
                                                 </li>
 
                                                 <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="pills-meals-tab" data-bs-toggle="pill"
+                                                        data-bs-target="#pills-meals" type="button" role="tab"
+                                                        aria-controls="pills-meals"
+                                                        aria-selected="false">Meals</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
                                                     <button class="nav-link" id="pills-transport-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-transport" type="button" role="tab"
                                                         aria-controls="pills-transport"
@@ -176,6 +182,11 @@
                                                     aria-labelledby="pills-perdiem-tab">
                                                     {{-- ca perdiem content --}}
                                                     @include('hcis.reimbursements.businessTrip.declaration.caPerdiemDeclare')
+                                                </div>
+                                                <div class="tab-pane fade show" id="pills-meals" role="tabpanel"
+                                                    aria-labelledby="pills-meals-tab">
+                                                    {{-- ca meals content --}}
+                                                    @include('hcis.reimbursements.businessTrip.declaration.caMealsDeclare')
                                                 </div>
                                                 <div class="tab-pane fade" id="pills-transport" role="tabpanel"
                                                     aria-labelledby="pills-transport-tab">
