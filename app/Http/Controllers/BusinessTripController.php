@@ -247,6 +247,7 @@ class BusinessTripController extends Controller
         $employee_data = Employee::where('id', $userId)->first();
         $employees = Employee::orderBy('ktp')->get();
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
+        $group_company = Employee::where('id', $userId)->pluck('group_company')->first();
 
         if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
@@ -328,7 +329,7 @@ class BusinessTripController extends Controller
             'caDetail' => $caDetail,
             'allowance' => $allowance,
             'ca' => $ca,
-            // 'nominalPerdiem' => $nominalPerdiem,
+            'group_company' => $group_company,
             'perdiem' => $perdiem,
             'parentLink' => $parentLink,
             'link' => $link,
@@ -2444,6 +2445,22 @@ class BusinessTripController extends Controller
                     }
                 }
             }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+                    $totalMeals = str_replace('.', '', $request->total_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                            'totalLainnya' => $totalMeals,
+                        ];
+                    }
+                }
+            }
 
             // Save the details
             $detail_ca = [
@@ -2451,6 +2468,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
 
 

@@ -25,8 +25,7 @@ function removeFormMeals(index, event) {
             if (nominalInput) {
                 let nominalValue = cleanNumber(nominalInput.value);
                 let total = cleanNumber(
-                    document.querySelector('input[name="total_bt_meals"]')
-                        .value
+                    document.querySelector('input[name="total_bt_meals"]').value
                 );
                 total -= nominalValue;
                 document.querySelector('input[name="total_bt_meals"]').value =
