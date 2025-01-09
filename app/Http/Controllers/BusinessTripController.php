@@ -2422,7 +2422,6 @@ class BusinessTripController extends Controller
                             'hotel_name' => $hotelName,
                             'company_code' => $companyCode,
                             'nominal' => $nominal,
-                            'totalPenginapan' => $totalPenginapan,
                         ];
                     }
                 }
@@ -2440,7 +2439,6 @@ class BusinessTripController extends Controller
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalLainnya,
                         ];
                     }
                 }
@@ -2456,7 +2454,6 @@ class BusinessTripController extends Controller
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalMeals' => $totalMeals,
                         ];
                     }
                 }
