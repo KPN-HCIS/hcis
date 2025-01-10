@@ -437,6 +437,7 @@
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                    const totalBtMeals = document.getElementById('total_bt_meals').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
                     const perdiemCheckbox = document.getElementById('perdiemCheckbox').checked;
                     const totalCa = document.getElementById('totalca').value;
@@ -464,10 +465,10 @@
                     }
                     // Check if CA is checked and all fields are zero
                     if (caCheckbox && totalBtPenginapan == 0 &&
-                        totalBtTransport == 0 && totalBtLainnya == 0) {
+                        totalBtTransport == 0 && totalBtLainnya == 0 && totalBtMeals == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            text: "Cash Advanced fields (Meals, Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",
@@ -605,7 +606,7 @@
                         totalBtTransport == 0 && totalBtLainnya == 0 && totalBtMeals == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            text: "Cash Advanced fields (Meals, Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",

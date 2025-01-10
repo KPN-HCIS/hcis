@@ -221,7 +221,8 @@
                                 $showCashAdvanced =
                                     !empty($detailCA['detail_transport']) ||
                                     !empty($detailCA['detail_penginapan']) ||
-                                    !empty($detailCA['detail_lainnya']);
+                                    !empty($detailCA['detail_lainnya'])||
+                                    !empty($detailCA['detail_meals']);
 
                             @endphp
                             <script>

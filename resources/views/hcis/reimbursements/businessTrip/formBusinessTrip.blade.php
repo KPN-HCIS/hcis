@@ -514,7 +514,7 @@
                         totalBtTransport == 0 && totalBtLainnya == 0 && totalBtMeals == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            text: "Cash Advanced fields (Meals, Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",
