@@ -279,6 +279,15 @@
             </td>
         </tr>
         <tr>
+            <td>Meals</td>
+            <td>
+                -
+            </td>
+            <td>
+                Rp. {{ number_format(array_sum(array_column($detailCA['detail_meals'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
             <td>Transport</td>
             <td>
                 -
@@ -338,7 +347,7 @@
                         </tr>
                     </table>
                 </td>
-                
+
             </tr>
         </table>
 

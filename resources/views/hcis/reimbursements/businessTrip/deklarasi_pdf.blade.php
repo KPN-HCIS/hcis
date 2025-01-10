@@ -297,6 +297,13 @@
             <td>{{ formatCurrency(safeArraySum($declareCA, 'detail_perdiem', 'nominal')) }}</td>
         </tr>
         <tr>
+            <td>Meals</td>
+            <td>-</td>
+            <td>{{ formatCurrency(safeArraySum($detailCA, 'detail_meals', 'nominal')) }}</td>
+            <td>-</td>
+            <td>{{ formatCurrency(safeArraySum($declareCA, 'detail_meals', 'nominal')) }}</td>
+        </tr>
+        <tr>
             <td>Transport</td>
             <td>-</td>
             <td>{{ formatCurrency(safeArraySum($detailCA, 'detail_transport', 'nominal')) }}</td>

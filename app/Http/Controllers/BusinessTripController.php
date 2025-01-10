@@ -1942,7 +1942,7 @@ class BusinessTripController extends Controller
                             // Integrate CA PDF generation from cashadvancedDownload
                             $pdfName = 'CA.pdf';
                             $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
-                            $employee_data = Employee::where('id', $user->id)->first();
+                            $employee_data = Employee::where('id', $sppd->user_id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
@@ -1953,6 +1953,12 @@ class BusinessTripController extends Controller
                                 ->where('approval_status', '!=', 'Rejected')
                                 ->orderBy('layer', 'asc')
                                 ->get();
+
+                            if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
+                                $allowance = "Perdiem";
+                            } else {
+                                $allowance = "Allowance";
+                            }
 
                             $data = [
                                 'link' => 'Cash Advanced',
@@ -1965,6 +1971,7 @@ class BusinessTripController extends Controller
                                 'no_sppds' => $no_sppds,
                                 'transactions' => $ca,
                                 'approval' => $approval,
+                                'allowance' => $allowance,
                             ];
                             break;
                         case 'tiket':
