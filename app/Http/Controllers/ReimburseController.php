@@ -3056,7 +3056,6 @@ class ReimburseController extends Controller
 
         // Fetch the hotel transactions using the latest ids
         $transactions = Hotel::whereIn('id', $latestHotelIds)
-            ->with('employee', 'hotelApproval')
             ->orderBy('created_at', 'desc')
             ->where('approval_status', '!=', 'Draft')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
@@ -3080,7 +3079,8 @@ class ReimburseController extends Controller
             });
         }
 
-        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd')->get();
+        $transactions = $transactions->select('id', 'no_htl', 'nama_htl', 'lokasi_htl', 'approval_status', 'user_id', 'no_sppd', 'manager_l1_id', 'manager_l2_id')->get();
+        // dd($transactions);
 
         // Fetch all hotel transactions, removing the user ID filter
         $hotels = Hotel::with('employee', 'hotelApproval')
@@ -3106,23 +3106,37 @@ class ReimburseController extends Controller
         // Group transactions by hotel number
         $hotelGroups = $hotels->groupBy('no_htl');
 
-        $managerL1Name = 'Unknown';
-        $managerL2Name = 'Unknown';
-
         foreach ($transactions as $transaction) {
-            // Fetch the employee for the current transaction
-            $employee = Employee::find($transaction->user_id);
+            // First check if manager IDs exist in the transaction (hotel db)
+            if ($transaction->manager_l1_id) {
+                // If exists in transaction, get manager name from transaction's manager_l1_id
+                $managerL1 = Employee::where('employee_id', $transaction->manager_l1_id)->first();
+                $transaction->manager_l1_name = $managerL1 ? $managerL1->fullname : 'Unknown';
+            } else {
+                // If not exists in transaction, get from requestor's (employee) data
+                $requestor = Employee::find($transaction->user_id);
+                if ($requestor && $requestor->manager_l1_id) {
+                    $managerL1 = Employee::where('employee_id', $requestor->manager_l1_id)->first();
+                    $transaction->manager_l1_name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                } else {
+                    $transaction->manager_l1_name = 'No Manager Assigned';
+                }
+            }
 
-            // If the employee exists, fetch their manager names
-            if ($employee) {
-                $managerL1Id = $employee->manager_l1_id;
-                $managerL2Id = $employee->manager_l2_id;
-
-                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
-                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
-
-                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
-                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            // Same logic for L2 manager
+            if ($transaction->manager_l2_id) {
+                // If exists in transaction, get manager name from transaction's manager_l2_id
+                $managerL2 = Employee::where('employee_id', $transaction->manager_l2_id)->first();
+                $transaction->manager_l2_name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            } else {
+                // If not exists in transaction, get from requestor's (employee) data
+                $requestor = Employee::find($transaction->user_id);
+                if ($requestor && $requestor->manager_l2_id) {
+                    $managerL2 = Employee::where('employee_id', $requestor->manager_l2_id)->first();
+                    $transaction->manager_l2_name = $managerL2 ? $managerL2->fullname : 'Unknown';
+                } else {
+                    $transaction->manager_l2_name = 'No Manager Assigned';
+                }
             }
         }
 
@@ -3141,8 +3155,6 @@ class ReimburseController extends Controller
             'hotels' => $hotels,
             'hotel' => $hotel,
             'hotelGroups' => $hotelGroups,
-            'managerL1Name' => $managerL1Name,
-            'managerL2Name' => $managerL2Name,
             'hotelApprovals' => $hotelApprovals,
             'employeeName' => $employeeName,
             // 'filter' => $filter,
@@ -4473,7 +4485,6 @@ class ReimburseController extends Controller
 
         // Get transactions with the latest ticket IDs
         $transactions = Tiket::whereIn('id', $latestTicketIds)
-            ->with('businessTrip')
             ->where('approval_status', '!=', 'Draft') // Apply the same filter to transactions
             ->orderBy('created_at', 'desc')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
@@ -4503,7 +4514,7 @@ class ReimburseController extends Controller
             });
         }
 
-        $transactions = $transactions->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd')
+        $transactions = $transactions->select('id', 'no_tkt', 'dari_tkt', 'ke_tkt', 'approval_status', 'jns_dinas_tkt', 'user_id', 'no_sppd', 'manager_l1_id', 'manager_l2_id')
             ->get();
 
         // Get all tickets
@@ -4530,26 +4541,41 @@ class ReimburseController extends Controller
         $ticketsGroups = $tickets->groupBy('no_tkt');
         $employeeName = Employee::pluck('fullname', 'employee_id');
 
-        $managerL1Name = 'Unknown';
-        $managerL2Name = 'Unknown';
-
         // Fetch employee data and manager names for transactions
         foreach ($transactions as $transaction) {
-            // Fetch the employee for the current transaction
-            $employee = Employee::find($transaction->user_id);
+            // First check if manager IDs exist in the transaction (hotel db)
+            if ($transaction->manager_l1_id) {
+                // If exists in transaction, get manager name from transaction's manager_l1_id
+                $managerL1 = Employee::where('employee_id', $transaction->manager_l1_id)->first();
+                $transaction->manager_l1_name = $managerL1 ? $managerL1->fullname : 'Unknown';
+            } else {
+                // If not exists in transaction, get from requestor's (employee) data
+                $requestor = Employee::find($transaction->user_id);
+                if ($requestor && $requestor->manager_l1_id) {
+                    $managerL1 = Employee::where('employee_id', $requestor->manager_l1_id)->first();
+                    $transaction->manager_l1_name = $managerL1 ? $managerL1->fullname : 'Unknown';
+                } else {
+                    $transaction->manager_l1_name = 'No Manager Assigned';
+                }
+            }
 
-            // If the employee exists, fetch their manager names
-            if ($employee) {
-                $managerL1Id = $employee->manager_l1_id;
-                $managerL2Id = $employee->manager_l2_id;
-
-                $managerL1 = Employee::where('employee_id', $managerL1Id)->first();
-                $managerL2 = Employee::where('employee_id', $managerL2Id)->first();
-
-                $managerL1Name = $managerL1 ? $managerL1->fullname : 'Unknown';
-                $managerL2Name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            // Same logic for L2 manager
+            if ($transaction->manager_l2_id) {
+                // If exists in transaction, get manager name from transaction's manager_l2_id
+                $managerL2 = Employee::where('employee_id', $transaction->manager_l2_id)->first();
+                $transaction->manager_l2_name = $managerL2 ? $managerL2->fullname : 'Unknown';
+            } else {
+                // If not exists in transaction, get from requestor's (employee) data
+                $requestor = Employee::find($transaction->user_id);
+                if ($requestor && $requestor->manager_l2_id) {
+                    $managerL2 = Employee::where('employee_id', $requestor->manager_l2_id)->first();
+                    $transaction->manager_l2_name = $managerL2 ? $managerL2->fullname : 'Unknown';
+                } else {
+                    $transaction->manager_l2_name = 'No Manager Assigned';
+                }
             }
         }
+
 
         // Count tickets grouped by 'no_tkt'
         $ticketCounts = $tickets->groupBy('no_tkt')->mapWithKeys(function ($group, $key) {
@@ -4565,8 +4591,6 @@ class ReimburseController extends Controller
             'tickets' => $tickets,
             'ticket' => $ticket,
             'ticketsGroups' => $ticketsGroups,
-            'managerL1Name' => $managerL1Name ?? 'Unknown',
-            'managerL2Name' => $managerL2Name ?? 'Unknown',
             'ticketApprovals' => $ticketApprovals,
             'employeeName' => $employeeName,
         ]);

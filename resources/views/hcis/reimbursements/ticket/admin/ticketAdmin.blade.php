@@ -240,9 +240,9 @@
                                                         ($transaction->approval_status == 'Rejected' || $transaction->approval_status == 'Declaration Rejected') &&
                                                             isset($ticketApprovals[$transaction->id])) onclick="showRejectInfo('{{ $transaction->id }}')"
                                                     title="Click to see rejection reason" @endif
-                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $managerL1Name ?? 'Unknown' }}"
+                                                    @if ($transaction->approval_status == 'Pending L1') title="L1 Manager: {{ $transaction->manager_l1_name ?? 'Unknown' }}"
                                                     @elseif ($transaction->approval_status == 'Pending L2')
-                                                    title="L2 Manager: {{ $managerL2Name ?? 'Unknown' }}" @endif>
+                                                    title="L2 Manager: {{ $transaction->manager_l2_name ?? 'Unknown' }}" @endif>
                                                     {{ $transaction->approval_status == 'Approved' ? 'Approved' : $transaction->approval_status }}
                                                 </span>
                                             </td>
