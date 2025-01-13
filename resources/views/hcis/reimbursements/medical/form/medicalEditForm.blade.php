@@ -143,7 +143,25 @@
                                 <div id="existing-file-preview" class="mt-2">
                                     @if ($medic->medical_proof)
                                         @php
-                                            $existingFiles = json_decode($medic->medical_proof, true);
+                                            $medicalProof = $medic->medical_proof;
+                                        
+                                            // Jika null, inisialisasi sebagai array kosong
+                                            if (is_null($medicalProof)) {
+                                                $existingFiles = [];
+                                            } else {
+                                                // Coba decode JSON
+                                                $decoded = json_decode($medicalProof, true);
+                                        
+                                                if (json_last_error() === JSON_ERROR_NONE) {
+                                                    // Jika decoding berhasil, gunakan hasilnya
+                                                    $existingFiles = $decoded;
+                                                } else {
+                                                    // Jika bukan JSON, asumsikan format lama (string biasa)
+                                                    $existingFiles = [$medicalProof];
+                                                }
+                                            }
+                                        
+                                            // Debug hasil akhir
                                         @endphp
 
                                         @foreach ($existingFiles as $file)

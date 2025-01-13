@@ -491,8 +491,15 @@ class MedicalController extends Controller
         $employee_data = Employee::where('id', $userId)->first();
 
         if ($request->has('removed_medical_proof')) {
-            $removedFiles = json_decode($request->removed_medical_proof, true);
+            $removedFiles = json_decode($request->removed_medical_proof, true) ?? [];
             $existingFiles = $request->existing_medical_proof ? json_decode($request->existing_medical_proof, true) : [];
+
+            if (!is_array($removedFiles)) {
+                $removedFiles = [];
+            }
+            if (!is_array($existingFiles)) {
+                $existingFiles = [];
+            }
         
             // Hapus file yang ada di server
             foreach ($removedFiles as $fileToRemove) {
