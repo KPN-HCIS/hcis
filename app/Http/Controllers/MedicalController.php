@@ -1691,6 +1691,7 @@ class MedicalController extends Controller
         // Validate the uploaded file
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',
+            'attachment' => 'nullable|mimes:pdf|max:3072', // Optional, max 3MB
         ]);
 
         // // Create instance of import class
@@ -1705,8 +1706,23 @@ class MedicalController extends Controller
         // return redirect()->route('medical.admin')->with('success', 'Transaction successfully added from Excel.');
 
         try {
+            $attachmentPath = null;
+            if ($request->hasFile('imp_attachment')) {
+                $attachment = $request->file('imp_attachment');
+                $attachmentName = 'proof_' . time() . '_' . $attachment->getClientOriginalName();
+                $uploadPath = 'uploads/proofs/import_medical';
+                $fullPath = public_path($uploadPath);
+            
+                // Save file to storage
+                $attachmentPath = $attachment->storeAs($uploadPath, $attachmentName, 'public');
+            
+                // Move file to public path
+                $attachment->move($fullPath, $attachmentName);
+                $existingFiles[] = $uploadPath . '/' . $attachmentName;
+            }
+
             // Create instance of import class
-            $import = new ImportHealthCoverage();
+            $import = new ImportHealthCoverage($attachmentPath);
 
             // Import the data
             Excel::import($import, $request->file('file'));

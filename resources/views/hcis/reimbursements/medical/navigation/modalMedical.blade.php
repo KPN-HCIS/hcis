@@ -1,6 +1,6 @@
 {{-- Excel Health Coverage Limit --}}
 <div class="modal fade" id="importExcelHealtCoverage" tabindex="-1" aria-labelledby="importExcelHealtCoverageLabel" aria-hidden="true">
-    <div class="modal-dialog" style="wid">
+    <div class="modal-dialog">
         <form method="POST" action="{{ route('import.medical') }}" enctype="multipart/form-data">
             @csrf
             <div class="modal-content">
@@ -9,7 +9,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="file" name="file" required>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label" for="file">Import File</label>
+                        <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label" for="imp_attachment">File Attachment (PDF)</label>
+                        <input type="file" class="form-control" name="imp_attachment" id="imp_attachment" accept=".pdf">
+                        <div id="pdfPreviewWrapper" style="margin-top: 10px;"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a href="{{ route('download-template') }}" class="btn btn-primary">Download Template</a>
@@ -78,6 +86,67 @@
         });
     </script>
 @endif
+
+{{-- Preview Import Attachment --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const attachmentInput = document.getElementById("imp_attachment");
+        const pdfPreviewWrapper = document.getElementById("pdfPreviewWrapper");
+
+        attachmentInput.addEventListener("change", function () {
+            const file = this.files[0];
+            pdfPreviewWrapper.innerHTML = ""; // Clear previous preview
+
+            if (file) {
+                const fileSizeInMB = file.size / (1024 * 1024);
+                const fileExtension = file.name.split(".").pop().toLowerCase();
+
+                if (fileExtension !== "pdf") {
+                    Swal.fire({
+                        title: "Unsupported Format!",  
+                        text: "Please upload a file in PDF format!",  
+                        icon: "warning",
+                        confirmButtonColor: "#9a2a27",
+                        confirmButtonText: 'OK',
+                    });
+                    this.value = ""; // Reset input
+                    return;
+                }
+
+                if (fileSizeInMB > 3) {
+                    Swal.fire({
+                        title: "File Size Too Large!",  
+                        text: "File size must not exceed 3MB!",  
+                        icon: "warning",
+                        confirmButtonColor: "#9a2a27",
+                        confirmButtonText: 'OK',
+                    });
+                    this.value = ""; // Reset input
+                    return;
+                }
+
+                // Create preview
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(file);
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+
+                const icon = document.createElement("img");
+                icon.src = "{{ asset('images/pdf_icon.png') }}";
+                icon.style.maxWidth = "48px";
+                icon.style.marginTop = "10px";
+                link.appendChild(icon);
+
+                const text = document.createElement("p");
+                text.textContent = "Click to view PDF";
+                text.style.marginTop = "5px";
+
+                pdfPreviewWrapper.appendChild(link);
+                pdfPreviewWrapper.appendChild(text);
+            }
+        });
+    });
+</script>
 
 {{-- Confirmation Submit --}}
 <script>
