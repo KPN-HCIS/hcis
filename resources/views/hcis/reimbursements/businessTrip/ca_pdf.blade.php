@@ -230,147 +230,87 @@
                     <td>{{ $perdiem['company_code'] }}</td>
                     <td>{{ $perdiem['total_days'] }} Hari</td>
                 </tr>
-                @endforeach
-                <tr class="total-row">
-                    <td colspan="4" class="head-row">Total</td>
-                    <td>
-                        {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Hari
-                    </td>
-                </tr>
-            </table>
-        @endif
-        <table class="table-approve" style="width: 70%;">
-            <tr>
-                <th colspan="3"><b>Detail Cash Advanced :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
-                <td colspan="2">Estimate</td>
-            </tr>
-            <tr class="head-row">
-                <td>Total Days</td>
-                <td>Amount</td>
-            </tr>
-            <tr>
-                <td class="label">Perdiem</td>
+            @endforeach
+            <tr class="total-row">
+                <td colspan="4" class="head-row">Total</td>
                 <td>
-                    @if (array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) <= 0)
-                        -
-                    @else
-                        {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
-                    @endif
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td>Transport</td>
-                <td>
-                    -
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td>Accomodation</td>
-                <td>
-                    @if (array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) <= 0)
-                        -
-                    @else
-                        {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
-                    @endif
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td>Others</td>
-                <td>
-                    -
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">Total</td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-        </table>
-    @elseif ( $transactions->type_ca == 'ndns' )
-        <table class="table-approve" style="width: 70%;">
-            <tr>
-                <th colspan="3"><b>Detail Cash Advanced :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
-                <td colspan="2">Estimate</td>
-            </tr>
-            <tr class="head-row">
-                <td>Total Days</td>
-                <td>Amount</td>
-            </tr>
-            <tr>
-                <td class="label">Non Bussiness Trip</td>
-                <td>
-                    {{ $transactions->total_days }} Days
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA, 'nominal_nbt')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">Total</td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-        </table>
-    @elseif ( $transactions->type_ca == 'entr' )
-        <table class="table-approve" style="width: 70%;">
-            <tr>
-                <th colspan="3"><b>Detail Cash Advanced :</b></th>
-            </tr>
-            <tr class="head-row">
-                <td rowspan="2" style="text-align: center;">Types of Cash Advanced</td>
-                <td colspan="2">Estimate</td>
-            </tr>
-            <tr class="head-row">
-                <td>Total Days</td>
-                <td>Amount</td>
-            </tr>
-            <tr>
-                <td class="label">Detail Entertain</td>
-                <td>
-                    {{ $transactions->total_days }} Days
-                </td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format(array_sum(array_column($detailCA['detail_e'], 'nominal')), 0, ',', '.') }}</span>  
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">Total</td>
-                <td>  
-                    <span style="float: left; margin-left:4px">Rp.</span>  
-                    <span style="float: right;">{{ number_format($transactions->total_ca, 0, ',', '.') }}</span>  
+                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
                 </td>
             </tr>
         </table>
     @endif
-
+    <table class="table-approve" style="width: 80%;">
+        <tr>
+            <th colspan="3"><b>Detail Cash Advanced :</b></th>
+        </tr>
+        <tr class="head-row">
+            <td rowspan="2" style="text-align: center;">Types of Down Payments</td>
+            <td colspan="2">Estimate</td>
+        </tr>
+        <tr class="head-row">
+            <td>Total Days</td>
+            <td>Amount</td>
+        </tr>
+        <tr>
+            <td class="label">{{$allowance}}</td>
+            <td>
+                @if (array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) <= 0)
+                    -
+                @else
+                    {{ array_sum(array_column($detailCA['detail_perdiem'], 'total_days')) }} Days
+                @endif
+            </td>
+            <td>
+                Rp. {{ number_format(array_sum(array_column($detailCA['detail_perdiem'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td>Meals</td>
+            <td>
+                -
+            </td>
+            <td>
+                Rp. {{ number_format(array_sum(array_column($detailCA['detail_meals'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td>Transport</td>
+            <td>
+                -
+            </td>
+            <td>
+                Rp. {{ number_format(array_sum(array_column($detailCA['detail_transport'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td>Accomodation</td>
+            <td>
+                @if (array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) <= 0)
+                    -
+                @else
+                    {{ array_sum(array_column($detailCA['detail_penginapan'], 'total_days')) }} Night
+                @endif
+            </td>
+            <td>
+                Rp.
+                {{ number_format(array_sum(array_column($detailCA['detail_penginapan'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td>Others</td>
+            <td>
+                -
+            </td>
+            <td>
+                Rp. {{ number_format(array_sum(array_column($detailCA['detail_lainnya'], 'nominal')), 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">Total</td>
+            <td>Rp. {{ number_format($transactions->total_ca, 0, ',', '.') }}</td>
+        </tr>
+    </table>
+    <br>
     <div style="page-break-after:always;">
         <table border=0 style="width: 20%; font-size: 11px;">
             <tr>

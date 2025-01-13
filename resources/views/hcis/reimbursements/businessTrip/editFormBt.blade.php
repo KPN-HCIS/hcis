@@ -111,9 +111,10 @@
                                         onchange="validateStartEndDates()">
                                 </div>
 
-                                <input class="form-control" id="perdiem" name="perdiem" type="hidden" value="{{ $perdiem->amount }}" readonly>
+                                <input class="form-control" id="perdiem" name="perdiem" type="hidden"
+                                    value="{{ $perdiem->amount }}" readonly>
                                 <input class="form-control" id="group_company" name="group_company" type="hidden"
-                                value="{{ $employee_data->group_company }}" readonly>
+                                    value="{{ $employee_data->group_company }}" readonly>
 
                                 <div class="col-md-4 mb-2">
                                     <label for="tujuan" class="form-label">Destination</label>
@@ -121,8 +122,8 @@
                                         onchange="BTtoggleOthers()" required>
                                         <option value="">--- Choose Destination ---</option>
                                         <option value="Others"
-                                        {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
-                                        Others</option>
+                                            {{ !in_array($n->tujuan, $locations->pluck('area')->toArray()) ? 'selected' : '' }}>
+                                            Others</option>
                                         @foreach ($locations as $location)
                                             <option value="{{ $location->area }}"
                                                 {{ $n->tujuan === $location->area ? 'selected' : '' }}>
@@ -229,7 +230,8 @@
                                 $showCashAdvanced =
                                     !empty($detailCA['detail_transport']) ||
                                     !empty($detailCA['detail_penginapan']) ||
-                                    !empty($detailCA['detail_lainnya']);
+                                    !empty($detailCA['detail_lainnya']) ||
+                                    !empty($detailCA['detail_meals']);
 
                             @endphp
                             <script>
@@ -243,7 +245,8 @@
                                         Business Trip Needs <br>
                                         @if ($isAllowed)
                                             <span class="text-info fst-italic">* Your job
-                                                level is above 8. No {{$allowance}} is required for your job level</span>
+                                                level is above 8. No {{ $allowance }} is required for your job
+                                                level</span>
                                         @endif
                                     </label>
                                     <div class="row">
@@ -254,7 +257,8 @@
                                                 <input class="form-check-input" type="checkbox" id="perdiemCheckbox"
                                                     value="Ya" onchange="updateCAValue()"
                                                     @checked($showPerdiem)>
-                                                <label class="form-check-label" for="perdiemCheckbox">{{$allowance}}</label>
+                                                <label class="form-check-label"
+                                                    for="perdiemCheckbox">{{ $allowance }}</label>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -311,7 +315,7 @@
                                                     <button class="nav-link" id="pills-perdiem-tab" data-bs-toggle="pill"
                                                         data-bs-target="#pills-perdiem" type="button" role="tab"
                                                         aria-controls="pills-perdiem"
-                                                        aria-selected="false">{{$allowance}}</button>
+                                                        aria-selected="false">{{ $allowance }}</button>
                                                 </li>
                                                 <li class="nav-item" role="presentation" id="nav-cashAdvanced"
                                                     style="display: {{ $showCashAdvanced ? 'block' : 'none' }};">
@@ -433,6 +437,7 @@
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                    const totalBtMeals = document.getElementById('total_bt_meals').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
                     const perdiemCheckbox = document.getElementById('perdiemCheckbox').checked;
                     const totalCa = document.getElementById('totalca').value;
@@ -460,10 +465,10 @@
                     }
                     // Check if CA is checked and all fields are zero
                     if (caCheckbox && totalBtPenginapan == 0 &&
-                        totalBtTransport == 0 && totalBtLainnya == 0) {
+                        totalBtTransport == 0 && totalBtLainnya == 0 && totalBtMeals == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            text: "Cash Advanced fields (Meals, Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",
@@ -570,6 +575,7 @@
                     const totalBtPenginapan = document.getElementById('total_bt_penginapan').value;
                     const totalBtTransport = document.getElementById('total_bt_transport').value;
                     const totalBtLainnya = document.getElementById('total_bt_lainnya').value;
+                    const totalBtMeals = document.getElementById('total_bt_meals').value;
                     const caCheckbox = document.getElementById('cashAdvancedCheckbox').checked;
                     const perdiemCheckbox = document.getElementById('perdiemCheckbox').checked;
                     const totalCa = document.getElementById('totalca').value;
@@ -597,10 +603,10 @@
                     }
                     // Check if CA is checked and all fields are zero
                     if (caCheckbox && totalBtPenginapan == 0 &&
-                        totalBtTransport == 0 && totalBtLainnya == 0) {
+                        totalBtTransport == 0 && totalBtLainnya == 0 && totalBtMeals == 0) {
                         Swal.fire({
                             title: "Warning!",
-                            text: "Cash Advanced fields (Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
+                            text: "Cash Advanced fields (Meals, Accommodation, Transport, Others) are 0.\nPlease fill in the values.",
                             icon: "warning",
                             confirmButtonColor: "#AB2F2B",
                             confirmButtonText: "OK",
@@ -662,6 +668,7 @@
             calculateTotalNominalBTTransport();
             calculateTotalNominalBTPenginapan();
             calculateTotalNominalBTLainnya();
+            calculateTotalNominalBTMeals();
             calculateTotalNominalBTTotal();
         }
 
@@ -679,6 +686,11 @@
             document.querySelectorAll('input[name="total_bt_lainnya"]').forEach(input => {
                 total += parseNumber(input.value);
             });
+            document
+                .querySelectorAll('input[name="total_bt_meals"]')
+                .forEach((input) => {
+                    total += parseNumber(input.value);
+                });
             document.querySelector('input[name="totalca"]').value = formatNumber(total);
         }
     </script>

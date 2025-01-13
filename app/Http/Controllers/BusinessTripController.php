@@ -724,7 +724,6 @@ class BusinessTripController extends Controller
                     $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
                     $companyCode = $request->company_bt_penginapan[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
 
                     if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
@@ -735,7 +734,6 @@ class BusinessTripController extends Controller
                             'hotel_name' => $hotelName,
                             'company_code' => $companyCode,
                             'nominal' => $nominal,
-                            'totalPenginapan' => $totalPenginapan,
                         ];
                     }
                 }
@@ -746,14 +744,26 @@ class BusinessTripController extends Controller
                 foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
                     $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
                     if (!empty($tanggal) && !empty($nominal)) {
                         $detail_lainnya[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
+                }
+            }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
                         ];
                     }
                 }
@@ -765,6 +775,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
 
             $ca->detail_ca = json_encode($detail_ca);
@@ -864,6 +875,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
 
                 // Fetch ticket and hotel details with proper conditions
@@ -928,6 +942,8 @@ class BusinessTripController extends Controller
         } else {
             $allowance = "Allowance";
         }
+
+        $group_company = Employee::where('id', $employee_data->id)->pluck('group_company')->first();
 
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
@@ -995,7 +1011,7 @@ class BusinessTripController extends Controller
             'n' => $n,
             'allowance' => $allowance,
             'hotelData' => $hotelData,
-            'taksiData' => $taksi, // Pass the taxi data
+            'taksiData' => $taksi,
             'ticketData' => $ticketData,
             'employee_data' => $employee_data,
             'companies' => $companies,
@@ -1007,6 +1023,7 @@ class BusinessTripController extends Controller
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
             'hasCaData' => $hasCaData,
             'perdiem' => $perdiem,
+            'group_company' => $group_company,
             'parentLink' => $parentLink,
             'link' => $link,
         ]);
@@ -1129,6 +1146,7 @@ class BusinessTripController extends Controller
             $detail_transport = [];
             $detail_penginapan = [];
             $detail_lainnya = [];
+            $detail_meals = [];
 
             // Populate detail_perdiem
             if ($request->has('start_bt_perdiem')) {
@@ -1179,7 +1197,6 @@ class BusinessTripController extends Controller
                     $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
                     $companyCode = $request->company_bt_penginapan[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
                     if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
                         $detail_penginapan[] = [
@@ -1189,7 +1206,6 @@ class BusinessTripController extends Controller
                             'hotel_name' => $hotelName,
                             'company_code' => $companyCode,
                             'nominal' => $nominal,
-                            'totalPenginapan' => $totalPenginapan,
                         ];
                     }
                 }
@@ -1200,14 +1216,26 @@ class BusinessTripController extends Controller
                 foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
                     $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
                     if (!empty($tanggal) && !empty($nominal)) {
                         $detail_lainnya[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalLainnya,
+                        ];
+                    }
+                }
+            }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
                         ];
                     }
                 }
@@ -1219,6 +1247,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
             if ($request->hasFile('prove_declare')) {
                 $file = $request->file('prove_declare');
@@ -1269,6 +1298,7 @@ class BusinessTripController extends Controller
             $detail_transport = [];
             $detail_penginapan = [];
             $detail_lainnya = [];
+            $detail_meals = [];
 
             // Populate detail_perdiem
             if ($request->has('start_bt_perdiem')) {
@@ -1354,12 +1384,28 @@ class BusinessTripController extends Controller
                     }
                 }
             }
+            if ($request->has('tanggal_bt_meals')) {
+                foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                    $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                    $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+                    $totalMeals = str_replace('.', '', $request->total_bt_meals[$key] ?? '0');
+
+                    if (!empty($tanggal) && !empty($nominal)) {
+                        $detail_meals[] = [
+                            'tanggal' => $tanggal,
+                            'keterangan' => $keterangan,
+                            'nominal' => $nominal,
+                        ];
+                    }
+                }
+            }
             // Save the details
             $declare_ca = [
                 'detail_perdiem' => $detail_perdiem,
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
             if ($request->hasFile('prove_declare')) {
                 $file = $request->file('prove_declare');
@@ -1473,6 +1519,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
                 // dd($caDetails,   $detail_ca );
 
@@ -1489,6 +1538,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($declare_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($declare_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($declare_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($declare_ca['detail_meals'] ?? [], 'nominal')),
                 ];
 
                 // Send email to the manager
@@ -1915,7 +1967,7 @@ class BusinessTripController extends Controller
                             // Integrate CA PDF generation from cashadvancedDownload
                             $pdfName = 'CA.pdf';
                             $viewPath = 'hcis.reimbursements.businessTrip.ca_pdf';
-                            $employee_data = Employee::where('id', $user->id)->first();
+                            $employee_data = Employee::where('id', $sppd->user_id)->first();
                             $companies = Company::orderBy('contribution_level')->get();
                             $locations = Location::orderBy('area')->get();
                             $perdiem = ListPerdiem::where('grade', $employee_data->job_level)
@@ -1926,6 +1978,12 @@ class BusinessTripController extends Controller
                                 ->where('approval_status', '!=', 'Rejected')
                                 ->orderBy('layer', 'asc')
                                 ->get();
+
+                            if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
+                                $allowance = "Perdiem";
+                            } else {
+                                $allowance = "Allowance";
+                            }
 
                             $data = [
                                 'link' => 'Cash Advanced',
@@ -1938,6 +1996,7 @@ class BusinessTripController extends Controller
                                 'no_sppds' => $no_sppds,
                                 'transactions' => $ca,
                                 'approval' => $approval,
+                                'allowance' => $allowance,
                             ];
                             break;
                         case 'tiket':
@@ -2437,7 +2496,6 @@ class BusinessTripController extends Controller
                     $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
                     $companyCode = $request->company_bt_penginapan[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                    $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
                     if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
                         $detail_penginapan[] = [
@@ -2447,7 +2505,6 @@ class BusinessTripController extends Controller
                             'hotel_name' => $hotelName,
                             'company_code' => $companyCode,
                             'nominal' => $nominal,
-                            'totalPenginapan' => $totalPenginapan,
                         ];
                     }
                 }
@@ -2458,14 +2515,12 @@ class BusinessTripController extends Controller
                 foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
                     $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                    $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
                     if (!empty($tanggal) && !empty($nominal)) {
                         $detail_lainnya[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalLainnya,
                         ];
                     }
                 }
@@ -2474,14 +2529,12 @@ class BusinessTripController extends Controller
                 foreach ($request->tanggal_bt_meals as $key => $tanggal) {
                     $keterangan = $request->keterangan_bt_meals[$key] ?? '';
                     $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
-                    $totalMeals = str_replace('.', '', $request->total_bt_meals[$key] ?? '0');
 
                     if (!empty($tanggal) && !empty($nominal)) {
                         $detail_meals[] = [
                             'tanggal' => $tanggal,
                             'keterangan' => $keterangan,
                             'nominal' => $nominal,
-                            'totalLainnya' => $totalMeals,
                         ];
                     }
                 }
@@ -2601,6 +2654,9 @@ class BusinessTripController extends Controller
 
                     'total_days_others' => count($detail_ca['detail_lainnya'] ?? []),
                     'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+
+                    'total_days_meals' => count($detail_ca['detail_meals'] ?? []),
+                    'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                 ];
                 // Fetch ticket and hotel details with proper conditions
                 $ticketDetails = Tiket::where('no_sppd', $businessTrip->no_sppd)
@@ -3048,7 +3104,7 @@ class BusinessTripController extends Controller
         } else {
             $allowance = "Allowance";
         }
-
+        $group_company = Employee::where('id', $employee_data->id)->pluck('group_company')->first();
         $ca = CATransaction::where('no_sppd', $n->no_sppd)->first();
 
         // Initialize caDetail with an empty array if it's null
@@ -3127,6 +3183,7 @@ class BusinessTripController extends Controller
             'nominalPerdiemDeclare' => $nominalPerdiemDeclare,
             'hasCaData' => $hasCaData,
             'perdiem' => $perdiem,
+            'group_company' => $group_company,
             'parentLink' => $parentLink,
             'link' => $link,
         ]);
@@ -3185,6 +3242,7 @@ class BusinessTripController extends Controller
                         'total_amount_transport' => array_sum(array_column($detail_ca['detail_transport'] ?? [], 'nominal')),
                         'total_amount_accommodation' => array_sum(array_column($detail_ca['detail_penginapan'] ?? [], 'nominal')),
                         'total_amount_others' => array_sum(array_column($detail_ca['detail_lainnya'] ?? [], 'nominal')),
+                        'total_amount_meals' => array_sum(array_column($detail_ca['detail_meals'] ?? [], 'nominal')),
                     ];
                     // dd($caDetails,   $detail_ca );
 
@@ -3211,6 +3269,9 @@ class BusinessTripController extends Controller
                         'total_amount_others' => array_sum(array_map(function ($nominal) {
                             return (int) str_replace('.', '', $nominal);
                         }, $request->input('nominal_bt_lainnya', []))),
+                        'total_amount_meals' => array_sum(array_map(function ($nominal) {
+                            return (int) str_replace('.', '', $nominal);
+                        }, $request->input('nominal_bt_meals', []))),
                     ];
 
                     $selisih = array_sum($caDetails) - array_sum($newDeclareCa);
@@ -3245,6 +3306,7 @@ class BusinessTripController extends Controller
         $detail_transport = [];
         $detail_penginapan = [];
         $detail_lainnya = [];
+        $detail_meals = [];
 
         // Populate detail_perdiem
         if ($request->has('start_bt_perdiem')) {
@@ -3296,7 +3358,6 @@ class BusinessTripController extends Controller
                 $hotelName = $request->hotel_name_bt_penginapan[$key] ?? '';
                 $companyCode = $request->company_bt_penginapan[$key] ?? '';
                 $nominal = str_replace('.', '', $request->nominal_bt_penginapan[$key] ?? '0');
-                $totalPenginapan = str_replace('.', '', $request->total_bt_penginapan[$key] ?? '0');
 
                 if (!empty($startDate) && !empty($endDate) && !empty($totalDays) && !empty($hotelName) && !empty($companyCode) && !empty($nominal)) {
                     $detail_penginapan[] = [
@@ -3306,7 +3367,6 @@ class BusinessTripController extends Controller
                         'hotel_name' => $hotelName,
                         'company_code' => $companyCode,
                         'nominal' => $nominal,
-                        'totalPenginapan' => $totalPenginapan,
                     ];
                 }
             }
@@ -3317,14 +3377,26 @@ class BusinessTripController extends Controller
             foreach ($request->tanggal_bt_lainnya as $key => $tanggal) {
                 $keterangan = $request->keterangan_bt_lainnya[$key] ?? '';
                 $nominal = str_replace('.', '', $request->nominal_bt_lainnya[$key] ?? '0');
-                $totalLainnya = str_replace('.', '', $request->total_bt_lainnya[$key] ?? '0');
 
                 if (!empty($tanggal) && !empty($nominal)) {
                     $detail_lainnya[] = [
                         'tanggal' => $tanggal,
                         'keterangan' => $keterangan,
                         'nominal' => $nominal,
-                        'totalLainnya' => $totalLainnya,
+                    ];
+                }
+            }
+        }
+        if ($request->has('tanggal_bt_meals')) {
+            foreach ($request->tanggal_bt_meals as $key => $tanggal) {
+                $keterangan = $request->keterangan_bt_meals[$key] ?? '';
+                $nominal = str_replace('.', '', $request->nominal_bt_meals[$key] ?? '0');
+
+                if (!empty($tanggal) && !empty($nominal)) {
+                    $detail_meals[] = [
+                        'tanggal' => $tanggal,
+                        'keterangan' => $keterangan,
+                        'nominal' => $nominal,
                     ];
                 }
             }
@@ -3337,6 +3409,7 @@ class BusinessTripController extends Controller
                 'detail_transport' => $detail_transport,
                 'detail_penginapan' => $detail_penginapan,
                 'detail_lainnya' => $detail_lainnya,
+                'detail_meals' => $detail_meals,
             ];
 
             $ca->declare_ca = json_encode($declare_ca);
@@ -3537,6 +3610,7 @@ class BusinessTripController extends Controller
         $userId = Auth::id();
         $employee_data = Employee::where('id', $n->user_id)->first();
         $employees = Employee::orderBy('ktp')->get();
+        $group_company = Employee::where('id', $employee_data->id)->pluck('group_company')->first();
 
         if ($employee_data->group_company == 'Plantations' || $employee_data->group_company == 'KPN Plantations') {
             $allowance = "Perdiem";
@@ -3619,6 +3693,7 @@ class BusinessTripController extends Controller
             'parentLink' => $parentLink,
             'link' => $link,
             'perdiem' => $perdiem,
+            'group_company' => $group_company,
         ]);
     }
 

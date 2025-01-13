@@ -1382,6 +1382,7 @@ function formatInput(input) {
     calculateTotalNominalBTTransport();
     calculateTotalNominalBTPenginapan();
     calculateTotalNominalBTLainnya();
+    calculateTotalNominalBTMeals();
     calculateTotalNominalBTTotal();
 }
 
@@ -1404,6 +1405,11 @@ function calculateTotalNominalBTTotal() {
         });
     document
         .querySelectorAll('input[name="total_bt_lainnya"]')
+        .forEach((input) => {
+            total += parseNumber(input.value);
+        });
+    document
+        .querySelectorAll('input[name="total_bt_meals"]')
         .forEach((input) => {
             total += parseNumber(input.value);
         });
