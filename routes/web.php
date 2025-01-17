@@ -40,6 +40,7 @@ use App\Http\Controllers\ReimburseController;
 use App\Http\Controllers\HomeTripController;
 use App\Http\Controllers\BTApprovalController;
 use App\Http\Controllers\ReminderController;
+use App\Http\Controllers\DocumentGeneratorController;
 use App\Models\Designation;
 use Faker\Provider\Medical;
 use Illuminate\Support\Facades\Route;
@@ -167,6 +168,13 @@ Route::middleware('auth')->group(function () {
     // My Menu
     Route::get('/reimbursements', [ReimburseController::class, 'reimbursements'])->name('reimbursements');
     Route::get('/travel', [ReimburseController::class, 'travel'])->name('travel');
+
+    Route::get('/generator', [DocumentGeneratorController::class, 'GeneratorDoc'])->name('docGenerator');
+    Route::get('/generator/edit/{id}', [DocumentGeneratorController::class, 'GeneratorEdit'])->name('docGenerator.edit');
+    Route::post('/generator/upload', [DocumentGeneratorController::class, 'GeneratorUpload'])->name('docGenerator.upload');
+    Route::post('/generator/preview', [DocumentGeneratorController::class, 'GeneratorPreview'])->name('docGenerator.preview');
+    Route::post('/generator/download', [DocumentGeneratorController::class, 'GeneratorDownload'])->name('docGenerator.download');
+    Route::delete('/doc-generator/{id}', [DocumentGeneratorController::class, 'GeneratorDelete'])->name('docGenerator.delete');
 
     // My Cash Advanced
     Route::get('/cashadvanced', [ReimburseController::class, 'cashadvanced'])->name('cashadvanced');

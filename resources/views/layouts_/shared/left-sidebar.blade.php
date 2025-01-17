@@ -91,6 +91,12 @@
             </li>
             @endif
             <li class="side-nav-item">
+                <a href="{{ route('docGenerator') }}" class="side-nav-link">
+                    <i class="ri-file-text-line"></i>
+                    <span> Document </span>
+                </a>
+            </li>
+            <li class="side-nav-item">
                 <a href="{{ url('/guides') }}" class="side-nav-link">
                     <i class="ri-file-text-line"></i>
                     <span> User Guide </span>
