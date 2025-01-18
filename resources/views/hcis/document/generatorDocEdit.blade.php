@@ -51,7 +51,7 @@
             <!-- Left Panel - Form -->
             <form action="{{ route('docGenerator.download') }}" method="POST" id="templateForm" class="d-flex">
                 @csrf
-                <input type="hidden" name="template_path" value="{{ $template_path }}">
+                <input type="hidden" name="template_path" value="{{ str_replace('/storage/', '', $template_path) }}">
                 {{-- {{dd($template_path);}} --}}
                 <input type="hidden" name="letter_name" value="{{ $letter_name }}">
                 <input type="hidden" name="action" id="formAction" value="save">
@@ -134,8 +134,16 @@
         }
 
         function loadPreview() {
-            fetch('{{ asset($template_path) }}')
-                .then(response => response.arrayBuffer())
+            const templateUrl = '{{ url($template_path) }}';
+            console.log('Attempting to load template from:', templateUrl);
+
+            fetch(templateUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.arrayBuffer();
+                })
                 .then(arrayBuffer => mammoth.convertToHtml({ arrayBuffer }))
                 .then(result => {
                     docxContent = result.value;
@@ -148,6 +156,7 @@
                         `<div class="alert alert-danger">Error loading preview: ${error.message}</div>`;
                 });
         }
+        console.log('Fuck',fetch('{{ asset('storage/app/public/'.$template_path) }}'));
 
         function setupEventListeners() {
             document.querySelectorAll('.preview-update').forEach(input => {
@@ -159,34 +168,62 @@
     </script>
     <script>
         document.getElementById('previewButton').addEventListener('click', function() {
-            // Get all form data
-            const formData = new FormData(document.getElementById('templateForm'));
+            const form = document.getElementById('templateForm');
+            const formData = new FormData(form);
             
-            // Send AJAX request
+            // Tampilkan loading state
+            const previewContainer = document.getElementById('previewContainer');
+            previewContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><div>Loading preview...</div></div>';
+
+            // Debug: Log form data
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]); 
+            }
+
             fetch('{{ route("docGenerator.preview") }}', {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Load preview using mammoth
-                    fetch('/' + data.preview_path)
-                        .then(response => response.arrayBuffer())
-                        .then(arrayBuffer => {
-                            return mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
-                        })
-                        .then(result => {
-                            document.getElementById('previewContainer').innerHTML = result.value;
-                        });
+            .then(async response => {
+                // Debug: Log response details
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    // Try to get error message from response
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Preview response:', data); // Debug: Log response data
+                if (data.success) {
+                    return fetch('/' + data.preview_path);
+                } else {
+                    throw new Error(data.message || 'Failed to generate preview');
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to load preview file');
+                }
+                return response.arrayBuffer();
+            })
+            .then(arrayBuffer => mammoth.convertToHtml({ arrayBuffer: arrayBuffer }))
+            .then(result => {
+                previewContainer.innerHTML = result.value;
             })
             .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('previewContainer').innerHTML = 'Error generating preview';
+                console.error('Error details:', error);
+                previewContainer.innerHTML = `<div class="alert alert-danger">
+                    Error generating preview: ${error.message}<br>
+                    <small>Check console for more details</small>
+                </div>`;
             });
         });
     </script>

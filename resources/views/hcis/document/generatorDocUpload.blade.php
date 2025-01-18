@@ -120,6 +120,20 @@
         </script>
     @endif
 
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    title: "Error!",
+                    text: "{{ session('error') }}",
+                    icon: "error",
+                    confirmButtonColor: "#9a2a27",
+                    confirmButtonText: 'Ok'
+                });
+            });
+        </script>
+    @endif
+
     <div class="modal fade" id="addDocumentModal" tabindex="-1" aria-labelledby="addDocumentModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form method="POST" action="{{ route('docGenerator.upload') }}" enctype="multipart/form-data">
