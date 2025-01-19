@@ -42,7 +42,7 @@
         <nav aria-label="breadcrumb" class="mb-3">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">{{ $parentLink }}</li>
-                <li class="breadcrumb-item">📁</li>
+                <li class="breadcrumb-item">📁 {{ $employeeId }}</li>
                 <li class="breadcrumb-item active">📄 {{ $letter_name }}</li>
             </ol>
         </nav>
@@ -66,15 +66,19 @@
                             </div> --}}
                             @if (!empty($placeholders))
                                 @foreach ($placeholders as $placeholder)
+                                    @php
+                                        // Membuat ID yang aman untuk form
+                                        $safeId = str_replace(' ', '_', strtolower($placeholder));
+                                    @endphp
                                     <div class="form-group mb-3">
-                                        <label for="{{ $placeholder }}">{{ ucfirst($placeholder) }}:</label>
+                                        <label for="{{ $safeId }}">{{ $placeholder }}:</label>
                                         <input type="text" 
-                                            name="{{ $placeholder }}" 
-                                            id="{{ $placeholder }}" 
+                                            name="fields[{{ $placeholder }}]" 
+                                            id="{{ $safeId }}" 
                                             required 
                                             class="form-control preview-update"
                                             data-placeholder="${{ $placeholder }}" 
-                                            placeholder="Enter {{ ucfirst($placeholder) }}">
+                                            placeholder="Enter {{ $placeholder }}">
                                     </div>
                                 @endforeach
                             @endif

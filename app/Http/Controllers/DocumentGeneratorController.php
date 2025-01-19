@@ -63,17 +63,17 @@ class DocumentGeneratorController extends Controller
             $templateVariables = array_unique($templateVariables);
 
             // Buat direktori jika belum ada
-            $templateDirectory = storage_path('templates/result');
+            $templateDirectory = storage_path('templates/result/'.$employeeId);
             if (!file_exists($templateDirectory)) {
                 mkdir($templateDirectory, 0777, true);
             }
 
             // Generate nama file yang unik
             $fileName = $request->letter_name . '_' . time() . '.docx';
-            $templatePath = 'templates/result/' . $fileName;
+            $templatePath = 'templates/result/'.$employeeId . '/' . $fileName;
 
             // Simpan file ke public disk
-            $templateFile->storeAs('public/templates/result', $fileName);
+            $templateFile->storeAs('public/templates/result/'.$employeeId.'/', $fileName);
 
             $document = new HRDocument();
             $document->letter_name = $request->letter_name;
@@ -95,7 +95,8 @@ class DocumentGeneratorController extends Controller
         $userId = Auth::id();
         $parentLink = 'Document Generator';
         $link = 'Document';
-        
+        $employeeId = auth()->user()->employee_id;
+
         // Ambil data dokumen
         $document = HRDocument::findOrFail($id);
         
@@ -129,7 +130,8 @@ class DocumentGeneratorController extends Controller
                 'letter_name' => $document->letter_name,
                 'template_path' => Storage::url($template_path), // This will generate the correct public URL
                 'document' => $document,
-                'placeholders' => $placeholders
+                'placeholders' => $placeholders,
+                'employeeId' => $employeeId,
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error editing document: ' . $e->getMessage());
@@ -138,32 +140,25 @@ class DocumentGeneratorController extends Controller
 
     public function GeneratorPreview(Request $request)
     {
+        $request->validate([
+            'template_path' => 'required|string',
+            'letter_name' => 'required|string',
+        ]);
+
+        $cleanPath = str_replace('/storage/', '', $request->input('template_path'));
+        $templatePath = storage_path('app/public/' . $cleanPath);
+
+        if (!is_file($templatePath)) {
+            throw new \Exception("Template file not found or is not a valid file: $templatePath");
+        }
+
         try {
-            // Validasi input
-            $request->validate([
-                'template_path' => 'required|string',
-                'letter_name' => 'required|string',
-            ]);
-
-            // Bersihkan path dari double slashes dan storage
-            $cleanPath = str_replace('/storage/', '', $request->input('template_path'));
-            
-            // Path lengkap ke template
-            $templatePath = storage_path('app/public/' . $cleanPath);
-
-            if (!file_exists($templatePath)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Template file not found at: ' . $templatePath
-                ], 404);
-            }
-
-            // Load file DOCX menggunakan TemplateProcessor
             $templateProcessor = new TemplateProcessor($templatePath);
 
             // Ganti placeholder dengan nilai dari form
-            foreach ($request->except(['_token', 'template_path', 'letter_name']) as $key => $value) {
-                $templateProcessor->setValue($key, $value ?: '${' . $key . '}');
+            foreach ($request->input('fields') as $placeholder => $value) {
+                // $placeholder sudah mengandung spasi yang asli
+                $templateProcessor->setValue($placeholder, $value);
             }
 
             // Generate nama file preview yang unik
@@ -209,44 +204,37 @@ class DocumentGeneratorController extends Controller
         $request->validate([
             'template_path' => 'required|string',
             'letter_name' => 'required|string',
+            'fields' => 'required|array'
         ]);
 
-        // Path lengkap ke template
-        // $templatePath = storage_path($request->input('template_path'));
         $cleanPath = str_replace('/storage/', '', $request->input('template_path'));
-            
-        // Path lengkap ke template
         $templatePath = storage_path('app/public/' . $cleanPath);
 
-        // Validasi apakah file ada dan valid
         if (!is_file($templatePath)) {
             throw new \Exception("Template file not found or is not a valid file: $templatePath");
         }
 
         try {
-            // Load file DOCX menggunakan TemplateProcessor
             $templateProcessor = new TemplateProcessor($templatePath);
+            
+            // Proses fields yang dikirim dari form
+            foreach ($request->input('fields') as $placeholder => $value) {
+                // $placeholder sudah mengandung spasi yang asli
+                $templateProcessor->setValue($placeholder, $value);
+            }
+
+            $resultDir = storage_path('app/public/templates/result');
+            if (!file_exists($resultDir)) {
+                mkdir($resultDir, 0777, true);
+            }
+
+            $resultPath = $resultDir . '/' . $request->input('letter_name') . '_generated.docx';
+            $templateProcessor->saveAs($resultPath);
+
+            return response()->download($resultPath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             throw new \Exception("Failed to process template file: " . $e->getMessage());
         }
-
-        // Ganti placeholder dengan nilai dari form
-        foreach ($request->except(['_token', 'template_path', 'letter_name']) as $key => $value) {
-            $templateProcessor->setValue($key, $value);
-        }
-
-        // Buat direktori jika belum ada
-        $resultDir = storage_path('app/public/templates/result');
-        if (!file_exists($resultDir)) {
-            mkdir($resultDir, 0777, true);
-        }
-
-        // Simpan hasil file yang sudah dimodifikasi
-        $resultPath = $resultDir . '/' . $request->input('letter_name') . '_generated.docx';
-        $templateProcessor->saveAs($resultPath);
-
-        // Kirimkan file hasil untuk diunduh
-        return response()->download($resultPath)->deleteFileAfterSend(true);
     }
 
     public function GeneratorDelete($id)
