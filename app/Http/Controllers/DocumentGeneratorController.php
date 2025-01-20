@@ -244,11 +244,11 @@ class DocumentGeneratorController extends Controller
             $document = HRDocument::findOrFail($id);
 
             // Hapus file template jika ada
-            if ($document->template_path && file_exists(storage_path($document->template_path))) {
-                unlink(storage_path($document->template_path));
+            if ($document->template_path && file_exists(storage_path('app/public/'. $document->template_path))) {
+                unlink(storage_path('app/public/'.$document->template_path));
                 
                 // Hapus folder jika kosong
-                $folderPath = dirname(storage_path($document->template_path));
+                $folderPath = dirname(storage_path('app/public/'.$document->template_path));
                 if (is_dir($folderPath) && count(scandir($folderPath)) <= 2) { // 2 karena . dan ..
                     rmdir($folderPath);
                 }
